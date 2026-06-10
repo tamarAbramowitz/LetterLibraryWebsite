@@ -2,6 +2,12 @@
 
 A modern, responsive web application for browsing beautiful personal letter templates. Built with React + TypeScript on the frontend and FastAPI on the backend.
 
+## Live Website
+
+**https://tamarAbramowitz.github.io/LetterLibraryWebsite/**
+
+The live site is hosted on GitHub Pages and updates automatically when you push to the `main` branch.
+
 ## Features
 
 - **Home Page** — Hero section, search, category filters, responsive card grid, letter count
