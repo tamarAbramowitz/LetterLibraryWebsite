@@ -16,8 +16,9 @@ async function loadStaticLetters(): Promise<Letter[]> {
   if (staticLettersCache) return staticLettersCache;
   const response = await fetch(`${import.meta.env.BASE_URL}letters.json`);
   if (!response.ok) throw new Error('Failed to load letters');
-  staticLettersCache = await response.json();
-  return staticLettersCache;
+  const data: Letter[] = await response.json();
+  staticLettersCache = data;
+  return data;
 }
 
 function filterLetters(
