@@ -1,0 +1,29 @@
+.error-message {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+}
+
+.error-message__text {
+  color: var(--color-text-muted);
+  margin-bottom: 1rem;
+}
+
+.error-message__retry {
+  padding: 0.6rem 1.5rem;
+  background: var(--color-accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.error-message__retry:hover {
+  background: var(--color-accent-hover);
+  transform: translateY(-1px);
+}

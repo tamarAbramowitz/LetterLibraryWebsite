@@ -1,0 +1,54 @@
+.letter-illustration {
+  width: 100%;
+  aspect-ratio: 5 / 4;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.letter-illustration__svg {
+  width: 80%;
+  height: auto;
+}
+
+.letter-illustration__envelope {
+  animation: float 4s ease-in-out infinite;
+}
+
+.letter-illustration__flap {
+  animation: flap 3s ease-in-out infinite;
+}
+
+.letter-illustration__orb {
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.letter-illustration__dot {
+  animation: drift 5s ease-in-out infinite;
+}
+
+.letter-illustration__dot--delay {
+  animation-delay: 1.5s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes flap {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.85; }
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(3px, -3px); }
+}
