@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Layout } from './components/Layout/Layout';
 import { AboutPage } from './pages/AboutPage/AboutPage';
+import { GenerateLetterPage } from './pages/GenerateLetterPage/GenerateLetterPage';
 import { HomePage } from './pages/HomePage/HomePage';
 import { LetterPage } from './pages/LetterPage/LetterPage';
 
@@ -10,6 +11,7 @@ function App() {
       <Routes>
         <Route element={<Layout />}>
           <Route index element={<HomePage />} />
+          <Route path="create" element={<GenerateLetterPage />} />
           <Route path="letter/:id" element={<LetterPage />} />
           <Route path="about" element={<AboutPage />} />
         </Route>

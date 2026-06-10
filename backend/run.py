@@ -1,46 +1,40 @@
 """Start the Letter Library API on an available port."""
 
 import socket
-import subprocess
 import sys
 
-PORT = 8080
+FALLBACK_PORTS = (8081, 8082, 8083, 8080, 8001)
 
 
-def port_is_free(port: int) -> bool:
+def port_is_in_use(port: int) -> bool:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        try:
-            sock.bind(("127.0.0.1", port))
-            return True
-        except OSError:
-            return False
+        return sock.connect_ex(("127.0.0.1", port)) == 0
+
+
+def find_port() -> int:
+    for port in FALLBACK_PORTS:
+        if not port_is_in_use(port):
+            return port
+    raise RuntimeError(
+        "No available port found. Close other servers (Ctrl+C in backend terminals) and try again."
+    )
 
 
 def main() -> None:
-    port = PORT
-    if not port_is_free(port):
-        print(f"ERROR: Port {port} is already in use.")
-        print("Run .\\start.ps1 to stop leftover servers, or close the other process.")
-        print(f"  netstat -ano | findstr :{port}")
-        raise SystemExit(1)
+    port = find_port()
     print(f"Starting Letter Library API at http://127.0.0.1:{port}")
     print(f"API docs: http://127.0.0.1:{port}/docs")
+    if port != 8081:
+        print(f"\nNote: Update frontend/.env → VITE_API_URL=http://localhost:{port}")
     print("Press Ctrl+C to stop.\n")
 
-    cmd = [
-        sys.executable,
-        "-m",
-        "uvicorn",
-        "app.main:app",
-        "--reload",
-        "--host",
-        "127.0.0.1",
-        "--port",
-        str(port),
-    ]
-    raise SystemExit(subprocess.call(cmd))
+    import uvicorn
+
+    uvicorn.run("app.main:app", host="127.0.0.1", port=port, reload=False)
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.exit(0)

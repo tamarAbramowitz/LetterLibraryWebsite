@@ -20,6 +20,9 @@ export function Header({ isDark, onToggleDark }: HeaderProps) {
           <NavLink to="/" className={({ isActive }) => `header__link ${isActive ? 'header__link--active' : ''}`} end>
             Home
           </NavLink>
+          <NavLink to="/create" className={({ isActive }) => `header__link ${isActive ? 'header__link--active' : ''}`}>
+            Create
+          </NavLink>
           <NavLink to="/about" className={({ isActive }) => `header__link ${isActive ? 'header__link--active' : ''}`}>
             About
           </NavLink>

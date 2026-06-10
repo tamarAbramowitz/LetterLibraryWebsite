@@ -55,3 +55,47 @@ class LetterService:
     def get_categories(cls) -> list[str]:
         letters = cls._load_all()
         return sorted({l.category for l in letters})
+
+    @classmethod
+    def _save_all(cls, letters: list[LetterModel]) -> None:
+        data = [l.to_dict() for l in letters]
+        with open(DATA_PATH, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+            f.write("\n")
+
+    @classmethod
+    def get_next_id(cls) -> int:
+        letters = cls._load_all()
+        return max((l.id for l in letters), default=0) + 1
+
+    @staticmethod
+    def category_to_image(category: str) -> str:
+        slug = category.lower().strip().replace(" ", "-")
+        known = {
+            "appreciation", "congratulations", "missing-you", "encouragement",
+            "check-in", "milestone-birthday", "apology", "inspiration", "memory",
+            "success", "thank-you", "new-beginning", "friendship", "creative",
+            "end-of-year", "education",
+        }
+        return slug if slug in known else "creative"
+
+    @classmethod
+    def create_letter(
+        cls,
+        title: str,
+        category: str,
+        description: str,
+        content: str,
+    ) -> LetterModel:
+        letter = LetterModel(
+            id=cls.get_next_id(),
+            title=title,
+            category=category,
+            description=description,
+            image=cls.category_to_image(category),
+            content=content,
+        )
+        letters = cls._load_all()
+        letters.append(letter)
+        cls._save_all(letters)
+        return letter

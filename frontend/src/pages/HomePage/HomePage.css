@@ -18,10 +18,35 @@
 
 .hero__subtitle {
   max-width: 600px;
-  margin: 0 auto;
+  margin: 0 auto 1.5rem;
   font-size: 1.05rem;
   line-height: 1.7;
   color: var(--color-text-muted);
+}
+
+.hero__create-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.75rem;
+  background: var(--color-accent);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.hero__create-btn:hover {
+  background: var(--color-accent-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.hero__create-icon {
+  font-size: 1.1rem;
 }
 
 .home-page__filters {

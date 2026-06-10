@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { fetchLetters } from '../../api/letters';
+import { Link, useLocation } from 'react-router-dom';
+import { fetchLetters, invalidateLettersCache } from '../../api/letters';
 import { CategoryFilter } from '../../components/CategoryFilter/CategoryFilter';
 import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
 import { LetterCard } from '../../components/LetterCard/LetterCard';
@@ -14,6 +15,7 @@ import './HomePage.css';
 const PAGE_SIZE = 9;
 
 export function HomePage() {
+  const location = useLocation();
   const [letters, setLetters] = useState<Letter[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [total, setTotal] = useState(0);
@@ -29,6 +31,7 @@ export function HomePage() {
   const loadLetters = useCallback(async () => {
     setLoading(true);
     setError(null);
+    invalidateLettersCache();
     try {
       const data = await fetchLetters({
         search: debouncedSearch || undefined,
@@ -48,7 +51,7 @@ export function HomePage() {
 
   useEffect(() => {
     loadLetters();
-  }, [loadLetters]);
+  }, [loadLetters, location.key]);
 
   useEffect(() => {
     setPage(1);
@@ -64,6 +67,10 @@ export function HomePage() {
           Discover beautiful letter templates for every moment — from heartfelt thank-yous
           to milestone celebrations. Find the perfect words for someone you care about.
         </p>
+        <Link to="/create" className="hero__create-btn">
+          <span className="hero__create-icon">✨</span>
+          Create New Letter
+        </Link>
       </section>
 
       <section className="home-page__filters">

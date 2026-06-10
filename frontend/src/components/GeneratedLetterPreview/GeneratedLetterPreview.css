@@ -1,0 +1,131 @@
+.generated-preview {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: previewFadeIn 0.5s ease forwards;
+}
+
+.generated-preview--visible {
+  opacity: 1;
+}
+
+@keyframes previewFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.generated-preview__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.generated-preview__badge {
+  padding: 0.35rem 0.85rem;
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.generated-preview__saved {
+  padding: 0.35rem 0.85rem;
+  background: rgba(39, 174, 96, 0.12);
+  color: #27ae60;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.generated-preview__illustration {
+  max-width: 320px;
+  margin: 0 auto 1.5rem;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.generated-preview__title {
+  font-family: var(--font-serif);
+  font-size: 1.75rem;
+  text-align: center;
+  margin: 0 0 0.25rem;
+  color: var(--color-text);
+}
+
+.generated-preview__meta {
+  text-align: center;
+  color: var(--color-accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 1.5rem;
+}
+
+.generated-preview__content {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.generated-preview__content p {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: var(--color-text);
+  margin: 0 0 1.25rem;
+}
+
+.generated-preview__content p:last-child {
+  margin-bottom: 0;
+}
+
+.generated-preview__actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.generated-preview__btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-full);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.generated-preview__btn--primary {
+  border: none;
+  background: var(--color-accent);
+  color: white;
+}
+
+.generated-preview__btn--primary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+  transform: translateY(-1px);
+}
+
+.generated-preview__btn--primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.generated-preview__btn--secondary {
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.generated-preview__btn--secondary:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
