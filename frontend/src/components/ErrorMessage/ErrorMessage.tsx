@@ -1,3 +1,4 @@
+import { useLocale } from '../../i18n/LocaleContext';
 import './ErrorMessage.css';
 
 interface ErrorMessageProps {
@@ -6,12 +7,14 @@ interface ErrorMessageProps {
 }
 
 export function ErrorMessage({ message, onRetry }: ErrorMessageProps) {
+  const { t } = useLocale();
+
   return (
     <div className="error-message" role="alert">
       <p className="error-message__text">{message}</p>
       {onRetry && (
         <button className="error-message__retry" onClick={onRetry}>
-          Try again
+          {t('error.retry')}
         </button>
       )}
     </div>

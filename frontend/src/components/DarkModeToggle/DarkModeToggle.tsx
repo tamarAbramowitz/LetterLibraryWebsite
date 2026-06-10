@@ -1,3 +1,4 @@
+import { useLocale } from '../../i18n/LocaleContext';
 import './DarkModeToggle.css';
 
 interface DarkModeToggleProps {
@@ -6,11 +7,13 @@ interface DarkModeToggleProps {
 }
 
 export function DarkModeToggle({ isDark, onToggle }: DarkModeToggleProps) {
+  const { t } = useLocale();
+
   return (
     <button
       className="dark-mode-toggle"
       onClick={onToggle}
-      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      aria-label={isDark ? t('darkMode.toLight') : t('darkMode.toDark')}
     >
       {isDark ? (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

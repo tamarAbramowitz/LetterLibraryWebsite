@@ -6,6 +6,7 @@ import { GeneratedLetterPreview } from '../../components/GeneratedLetterPreview/
 import { LetterForm } from '../../components/LetterForm/LetterForm';
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
 import { useGeneratedLetters } from '../../hooks/useGeneratedLetters';
+import { useLocale } from '../../i18n/LocaleContext';
 import type { LetterFormData, LetterFormErrors } from '../../types/generate';
 import type { Letter } from '../../types/letter';
 import { hasFormErrors, validateLetterForm } from '../../utils/validateLetterForm';
@@ -20,6 +21,7 @@ const INITIAL_FORM: LetterFormData = {
 
 export function GenerateLetterPage() {
   const navigate = useNavigate();
+  const { locale, t, translations } = useLocale();
   const { saveLetter } = useGeneratedLetters();
   const [form, setForm] = useState<LetterFormData>(INITIAL_FORM);
   const [errors, setErrors] = useState<LetterFormErrors>({});
@@ -39,7 +41,7 @@ export function GenerateLetterPage() {
   };
 
   const handleGenerate = async () => {
-    const validation = validateLetterForm(form);
+    const validation = validateLetterForm(form, translations.form.errors);
     setErrors(validation);
     if (hasFormErrors(validation)) return;
 
@@ -49,13 +51,13 @@ export function GenerateLetterPage() {
     setSaved(false);
 
     try {
-      const result = await generateLetter(form);
+      const result = await generateLetter(form, locale);
       const persisted = saveLetter(result.letter);
       invalidateLettersCache();
       setGenerated(persisted);
       setSaved(true);
     } catch (err) {
-      setApiError(err instanceof Error ? err.message : 'Failed to generate letter');
+      setApiError(err instanceof Error ? err.message : t('create.generateError'));
     } finally {
       setGenerating(false);
     }
@@ -82,16 +84,14 @@ export function GenerateLetterPage() {
   return (
     <div className="generate-page">
       <div className="generate-page__header">
-        <Link to="/" className="generate-page__back">← Back to Library</Link>
-        <h1 className="generate-page__title">Create New Letter</h1>
-        <p className="generate-page__subtitle">
-          Describe your letter and let AI craft a warm, personal message for you.
-        </p>
+        <Link to="/" className="generate-page__back">{t('create.back')}</Link>
+        <h1 className="generate-page__title">{t('create.title')}</h1>
+        <p className="generate-page__subtitle">{t('create.subtitle')}</p>
       </div>
 
       <div className="generate-page__layout">
         <section className="generate-page__form-section">
-          <h2 className="generate-page__section-title">Letter Details</h2>
+          <h2 className="generate-page__section-title">{t('create.detailsTitle')}</h2>
           <LetterForm
             data={form}
             errors={errors}
@@ -105,17 +105,17 @@ export function GenerateLetterPage() {
         </section>
 
         <section className="generate-page__preview-section">
-          <h2 className="generate-page__section-title">Preview</h2>
+          <h2 className="generate-page__section-title">{t('create.previewTitle')}</h2>
           {generating && (
             <div className="generate-page__loading">
               <LoadingSpinner />
-              <p>Crafting your letter...</p>
+              <p>{t('create.crafting')}</p>
             </div>
           )}
           {!generating && !generated && (
             <div className="generate-page__placeholder">
               <span className="generate-page__placeholder-icon">✉</span>
-              <p>Fill in the form and click Generate Letter to see your creation here.</p>
+              <p>{t('create.placeholder')}</p>
             </div>
           )}
           {!generating && generated && (

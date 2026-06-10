@@ -61,6 +61,12 @@
   background: var(--color-accent-light);
 }
 
+.header__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 @media (max-width: 480px) {
   .header__logo-text {
     font-size: 1.1rem;

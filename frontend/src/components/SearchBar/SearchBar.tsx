@@ -4,12 +4,16 @@ interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  ariaLabel?: string;
+  clearLabel?: string;
 }
 
 export function SearchBar({
   value,
   onChange,
   placeholder = 'Search letters by title, theme, or content...',
+  ariaLabel = 'Search letters',
+  clearLabel = 'Clear search',
 }: SearchBarProps) {
   return (
     <div className="search-bar">
@@ -23,13 +27,13 @@ export function SearchBar({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        aria-label="Search letters"
+        aria-label={ariaLabel}
       />
       {value && (
         <button
           className="search-bar__clear"
           onClick={() => onChange('')}
-          aria-label="Clear search"
+          aria-label={clearLabel}
         >
           ×
         </button>

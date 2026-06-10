@@ -1,3 +1,4 @@
+import { useLocale } from '../../i18n/LocaleContext';
 import './Pagination.css';
 
 interface PaginationProps {
@@ -7,19 +8,21 @@ interface PaginationProps {
 }
 
 export function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
+  const { t } = useLocale();
+
   if (totalPages <= 1) return null;
 
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <nav className="pagination" aria-label="Pagination">
+    <nav className="pagination" aria-label={t('pagination.aria')}>
       <button
         className="pagination__btn"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        aria-label="Previous page"
+        aria-label={t('pagination.prevAria')}
       >
-        ← Prev
+        {t('pagination.prev')}
       </button>
 
       <div className="pagination__pages">
@@ -28,7 +31,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
             key={page}
             className={`pagination__page ${page === currentPage ? 'pagination__page--active' : ''}`}
             onClick={() => onPageChange(page)}
-            aria-label={`Page ${page}`}
+            aria-label={t('pagination.pageAria', { page })}
             aria-current={page === currentPage ? 'page' : undefined}
           >
             {page}
@@ -40,9 +43,9 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         className="pagination__btn"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        aria-label="Next page"
+        aria-label={t('pagination.nextAria')}
       >
-        Next →
+        {t('pagination.next')}
       </button>
     </nav>
   );

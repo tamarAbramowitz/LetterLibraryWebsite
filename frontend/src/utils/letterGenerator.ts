@@ -1,6 +1,13 @@
+import type { Locale } from '../i18n/types';
 import type { GenerateLetterRequest, Tone } from '../types/generate';
 
-const TONE_GUIDANCE: Record<Tone, { opening: string; closing: string; body: (r: GenerateLetterRequest) => string }> = {
+type ToneStyle = {
+  opening: string;
+  closing: string;
+  body: (r: GenerateLetterRequest) => string;
+};
+
+const TONE_GUIDANCE_EN: Record<Tone, ToneStyle> = {
   Friendly: {
     opening: 'Dear Friend,',
     closing: 'With warmth and friendship,\nYour friend',
@@ -53,8 +60,57 @@ const TONE_GUIDANCE: Record<Tone, { opening: string; closing: string; body: (r: 
   },
 };
 
-export function generateLetterContent(request: GenerateLetterRequest): string {
-  const style = TONE_GUIDANCE[request.tone];
+const TONE_GUIDANCE_HE: Record<Tone, ToneStyle> = {
+  Friendly: {
+    opening: 'חבר/ה יקר/ה,',
+    closing: 'בחום ובידידות,\nחבר/ה שלך',
+    body: (r) =>
+      `רציתי לקחת רגע ולכתוב על ${r.title}. ${r.description}\n\n` +
+      `יש משהו מיוחד ברגעים כאלה — הם מזכירים לנו מה באמת חשוב. ` +
+      `בין אם אנחנו חוגגים, מהרהרים או פשוט משתפים את מה שאנחנו מרגישים, ` +
+      `למכתבים יש דרך לתפוס דברים שמילים מדוברות לפעמים לא מצליחות.\n\n` +
+      `אני מקווה שהמסר הזה מגיע אליך בשלום ומביא חיוך ליום שלך. ` +
+      `דע/י שאת/ה נמצא/ת במחשבות שלי, ושהמכתב הזה בנושא ${r.category} ` +
+      `מגיע ממקום של אכפתיות אמיתית.`,
+  },
+  Formal: {
+    opening: 'לכבוד,',
+    closing: 'בכבוד רב,\nבברכה',
+    body: (r) =>
+      `אני פונה אליך בנושא ${r.title}. ${r.description}\n\n` +
+      `אבקש לבטא את מחשבותיי באירוע זה בכבוד ובהתאם לחשיבותו. ` +
+      `נושאים של ${r.category} ראויים להכרה ברורה ומכובדת, ואני מקווה שהמילים הללו משקפות זאת.\n\n` +
+      `אנא קבל/י מכתב זה כביטוי כן של רגשותיי בנושא. ` +
+      `אני מאמין/ה שהוא יתקבל ברוח שבה נכתב.`,
+  },
+  Emotional: {
+    opening: 'חבר/ה יקר/ה,',
+    closing: 'מכל הלב,\nמישהו שאכפת לו ממך מאוד',
+    body: (r) =>
+      `אני נושא/ת את המילים האלה בלב כבר זמן מה. ${r.description}\n\n` +
+      `כשאני חושב/ת על ${r.title}, אני מרגיש/ה עומק רגשי שלא תמיד קל לבטא. ` +
+      `אבל יש רגשות שמגיעים להיאמר — או להיכתב — גם כשמציאת המילים הנכונות דורשת אומץ.\n\n` +
+      `המכתב הזה הוא הניסיון שלי לכבד את מה שאני מרגיש/ה. אני מקווה שתרגיש/י את הכנות שבכל שורה. ` +
+      `את/ה חשוב/ה יותר ממה שאולי נדמה לך, והמסר הזה בנושא ${r.category} ` +
+      `הוא הדרך שלי להגיד לך את זה.`,
+  },
+  Encouraging: {
+    opening: 'חבר/ה יקר/ה,',
+    closing: 'תמיד מאמין/ה בך,\nהמעודד/ת שלך',
+    body: (r) =>
+      `אני כותב/ת כי אני מאמין/ה בך, וכי ${r.description.replace(/\.$/, '')}. ` +
+      `זה עוסק ב${r.title}, ואני רוצה שתדע/י שאת/ה מסוגל/ת ` +
+      `להרבה יותר ממה שאת/ה לפעמים נותן/ת לעצמך.\n\n` +
+      `כל אתגר נושא בתוכו זרע של צמיחה. ראיתי את הכוח שלך בעבר — ברגעים שקטים וגם בקשים — ` +
+      `והוא לא נעלם. הוא עדיין שם, מחכה שתשתמש/י בו.\n\n` +
+      `קח/י את זה צעד אחרי צעד. לא חייבים להבין הכול היום. ` +
+      `מה שצריך זה להמשיך, ולזכור שמישהו מעודד אותך בכל צעד.`,
+  },
+};
+
+export function generateLetterContent(request: GenerateLetterRequest, locale: Locale = 'en'): string {
+  const guidance = locale === 'he' ? TONE_GUIDANCE_HE : TONE_GUIDANCE_EN;
+  const style = guidance[request.tone];
   return `${style.opening}\n\n${style.body(request)}\n\n${style.closing}`;
 }
 
@@ -64,6 +120,9 @@ export function categoryToImage(category: string): string {
     'appreciation', 'congratulations', 'missing-you', 'encouragement', 'check-in',
     'milestone-birthday', 'apology', 'inspiration', 'memory', 'success', 'thank-you',
     'new-beginning', 'friendship', 'creative', 'end-of-year', 'education',
+    'הערכה', 'ברכות', 'מתגעגעים', 'עידוד', 'בדיקת-מצב',
+    'יום-הולדת-אבן-דרך', 'התנצלות', 'השראה', 'זיכרון', 'הצלחה', 'תודה',
+    'התחלה-חדשה', 'חברות', 'יצירתי', 'ברכות-לסוף-השנה', 'חינוך',
   ]);
   return known.has(slug) ? slug : 'creative';
 }

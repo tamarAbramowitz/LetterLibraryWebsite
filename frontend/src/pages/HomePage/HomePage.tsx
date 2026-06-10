@@ -9,6 +9,8 @@ import { Pagination } from '../../components/Pagination/Pagination';
 import { SearchBar } from '../../components/SearchBar/SearchBar';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useFavorites } from '../../hooks/useFavorites';
+import { translateCategory } from '../../i18n/categories';
+import { useLocale } from '../../i18n/LocaleContext';
 import type { Letter } from '../../types/letter';
 import './HomePage.css';
 
@@ -16,6 +18,7 @@ const PAGE_SIZE = 9;
 
 export function HomePage() {
   const location = useLocation();
+  const { locale, t } = useLocale();
   const [letters, setLetters] = useState<Letter[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [total, setTotal] = useState(0);
@@ -38,16 +41,17 @@ export function HomePage() {
         category: category || undefined,
         page,
         pageSize: PAGE_SIZE,
+        locale,
       });
       setLetters(data.letters);
       setTotal(data.total);
       setCategories(data.categories);
     } catch {
-      setError('Unable to load letters. Please make sure the server is running.');
+      setError(t('home.loadError'));
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearch, category, page]);
+  }, [debouncedSearch, category, page, locale, t]);
 
   useEffect(() => {
     loadLetters();
@@ -55,26 +59,37 @@ export function HomePage() {
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedSearch, category]);
+  }, [debouncedSearch, category, locale]);
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
+
+  const countText = loading
+    ? t('home.loading')
+    : total === 1
+      ? t('home.letterCount', { count: total })
+      : t('home.lettersCount', { count: total }) +
+        (category ? t('home.inCategory', { category: translateCategory(category, locale) }) : '') +
+        (debouncedSearch ? t('home.matching', { query: debouncedSearch }) : '');
 
   return (
     <div className="home-page">
       <section className="hero">
-        <h1 className="hero__title">Letter Library</h1>
-        <p className="hero__subtitle">
-          Discover beautiful letter templates for every moment — from heartfelt thank-yous
-          to milestone celebrations. Find the perfect words for someone you care about.
-        </p>
+        <h1 className="hero__title">{t('home.heroTitle')}</h1>
+        <p className="hero__subtitle">{t('home.heroSubtitle')}</p>
         <Link to="/create" className="hero__create-btn">
           <span className="hero__create-icon">✨</span>
-          Create New Letter
+          {t('home.createBtn')}
         </Link>
       </section>
 
       <section className="home-page__filters">
-        <SearchBar value={search} onChange={setSearch} />
+        <SearchBar
+          value={search}
+          onChange={setSearch}
+          placeholder={t('search.placeholder')}
+          ariaLabel={t('search.ariaLabel')}
+          clearLabel={t('search.clear')}
+        />
         <CategoryFilter
           categories={categories}
           selected={category}
@@ -83,15 +98,7 @@ export function HomePage() {
       </section>
 
       <div className="home-page__count">
-        {loading ? (
-          <span>Loading letters...</span>
-        ) : (
-          <span>
-            {total} {total === 1 ? 'letter' : 'letters'} found
-            {category && ` in "${category}"`}
-            {debouncedSearch && ` matching "${debouncedSearch}"`}
-          </span>
-        )}
+        <span>{countText}</span>
       </div>
 
       {loading && <LoadingSpinner />}
@@ -100,7 +107,7 @@ export function HomePage() {
 
       {!loading && !error && letters.length === 0 && (
         <div className="home-page__empty">
-          <p>No letters match your search. Try a different keyword or category.</p>
+          <p>{t('home.empty')}</p>
         </div>
       )}
 

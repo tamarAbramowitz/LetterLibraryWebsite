@@ -1,3 +1,5 @@
+import { CATEGORY_SUGGESTIONS_EN, translateCategory } from '../../i18n/categories';
+import { useLocale } from '../../i18n/LocaleContext';
 import type { LetterFormData, LetterFormErrors } from '../../types/generate';
 import { TONES } from '../../types/generate';
 import './LetterForm.css';
@@ -10,12 +12,9 @@ interface LetterFormProps {
   onSubmit: () => void;
 }
 
-const CATEGORY_SUGGESTIONS = [
-  'Appreciation', 'Congratulations', 'Encouragement', 'Friendship',
-  'Thank You', 'Memory', 'Inspiration', 'New Beginning',
-];
-
 export function LetterForm({ data, errors, disabled, onChange, onSubmit }: LetterFormProps) {
+  const { locale, t } = useLocale();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit();
@@ -24,21 +23,21 @@ export function LetterForm({ data, errors, disabled, onChange, onSubmit }: Lette
   return (
     <form className="letter-form" onSubmit={handleSubmit} noValidate>
       <div className="letter-form__field">
-        <label htmlFor="title" className="letter-form__label">Letter Title</label>
+        <label htmlFor="title" className="letter-form__label">{t('form.titleLabel')}</label>
         <input
           id="title"
           type="text"
           className={`letter-form__input ${errors.title ? 'letter-form__input--error' : ''}`}
           value={data.title}
           onChange={(e) => onChange('title', e.target.value)}
-          placeholder="e.g., A Thank You for Your Kindness"
+          placeholder={t('form.titlePlaceholder')}
           disabled={disabled}
         />
         {errors.title && <span className="letter-form__error">{errors.title}</span>}
       </div>
 
       <div className="letter-form__field">
-        <label htmlFor="category" className="letter-form__label">Letter Category</label>
+        <label htmlFor="category" className="letter-form__label">{t('form.categoryLabel')}</label>
         <input
           id="category"
           type="text"
@@ -46,25 +45,25 @@ export function LetterForm({ data, errors, disabled, onChange, onSubmit }: Lette
           className={`letter-form__input ${errors.category ? 'letter-form__input--error' : ''}`}
           value={data.category}
           onChange={(e) => onChange('category', e.target.value)}
-          placeholder="e.g., Appreciation"
+          placeholder={t('form.categoryPlaceholder')}
           disabled={disabled}
         />
         <datalist id="category-suggestions">
-          {CATEGORY_SUGGESTIONS.map((cat) => (
-            <option key={cat} value={cat} />
+          {CATEGORY_SUGGESTIONS_EN.map((cat) => (
+            <option key={cat} value={locale === 'he' ? translateCategory(cat, 'he') : cat} />
           ))}
         </datalist>
         {errors.category && <span className="letter-form__error">{errors.category}</span>}
       </div>
 
       <div className="letter-form__field">
-        <label htmlFor="description" className="letter-form__label">Description</label>
+        <label htmlFor="description" className="letter-form__label">{t('form.descriptionLabel')}</label>
         <textarea
           id="description"
           className={`letter-form__textarea ${errors.description ? 'letter-form__input--error' : ''}`}
           value={data.description}
           onChange={(e) => onChange('description', e.target.value)}
-          placeholder="Describe what the letter should be about, who it is for, and what you want to express..."
+          placeholder={t('form.descriptionPlaceholder')}
           rows={4}
           disabled={disabled}
         />
@@ -72,8 +71,8 @@ export function LetterForm({ data, errors, disabled, onChange, onSubmit }: Lette
       </div>
 
       <div className="letter-form__field">
-        <span className="letter-form__label">Tone</span>
-        <div className="letter-form__tones" role="radiogroup" aria-label="Letter tone">
+        <span className="letter-form__label">{t('form.toneLabel')}</span>
+        <div className="letter-form__tones" role="radiogroup" aria-label={t('form.toneAria')}>
           {TONES.map((tone) => (
             <button
               key={tone}
@@ -84,7 +83,7 @@ export function LetterForm({ data, errors, disabled, onChange, onSubmit }: Lette
               onClick={() => onChange('tone', tone)}
               disabled={disabled}
             >
-              {tone}
+              {t(`tones.${tone}`)}
             </button>
           ))}
         </div>
@@ -92,7 +91,7 @@ export function LetterForm({ data, errors, disabled, onChange, onSubmit }: Lette
       </div>
 
       <button type="submit" className="letter-form__submit" disabled={disabled}>
-        {disabled ? 'Generating...' : 'Generate Letter'}
+        {disabled ? t('form.generating') : t('form.submit')}
       </button>
     </form>
   );

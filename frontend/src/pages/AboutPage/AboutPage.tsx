@@ -1,55 +1,48 @@
+import { useLocale } from '../../i18n/LocaleContext';
 import './AboutPage.css';
 
 export function AboutPage() {
+  const { t, translations } = useLocale();
+
   return (
     <div className="about-page">
       <section className="about-page__hero">
-        <h1 className="about-page__title">About Letter Library</h1>
-        <p className="about-page__lead">
-          A curated collection of heartfelt letter templates to help you express what matters most.
-        </p>
+        <h1 className="about-page__title">{t('about.title')}</h1>
+        <p className="about-page__lead">{t('about.lead')}</p>
       </section>
 
       <section className="about-page__section">
-        <h2>Our Mission</h2>
-        <p>
-          In a world of quick texts and fleeting messages, a thoughtful letter still holds
-          extraordinary power. Letter Library was created to help you find the right words for
-          life's meaningful moments — whether you're thanking a friend, celebrating a milestone,
-          or reconnecting with someone you've missed.
-        </p>
+        <h2>{t('about.missionTitle')}</h2>
+        <p>{t('about.missionText')}</p>
       </section>
 
       <section className="about-page__section">
-        <h2>How It Works</h2>
+        <h2>{t('about.howTitle')}</h2>
         <div className="about-page__steps">
           <div className="about-page__step">
             <span className="about-page__step-number">1</span>
-            <h3>Browse</h3>
-            <p>Explore our collection of 16 letter templates across different categories and themes.</p>
+            <h3>{t('about.step1Title')}</h3>
+            <p>{t('about.step1Text')}</p>
           </div>
           <div className="about-page__step">
             <span className="about-page__step-number">2</span>
-            <h3>Read</h3>
-            <p>Open any letter to enjoy a clean, distraction-free reading experience.</p>
+            <h3>{t('about.step2Title')}</h3>
+            <p>{t('about.step2Text')}</p>
           </div>
           <div className="about-page__step">
             <span className="about-page__step-number">3</span>
-            <h3>Personalize</h3>
-            <p>Use the template as inspiration and adapt it with your own memories and voice.</p>
+            <h3>{t('about.step3Title')}</h3>
+            <p>{t('about.step3Text')}</p>
           </div>
         </div>
       </section>
 
       <section className="about-page__section">
-        <h2>Features</h2>
+        <h2>{t('about.featuresTitle')}</h2>
         <ul className="about-page__features">
-          <li>Search and filter letters by category</li>
-          <li>Save your favorite letters for quick access</li>
-          <li>Dark mode for comfortable evening reading</li>
-          <li>Reading progress indicator on letter pages</li>
-          <li>Share letters with friends and family</li>
-          <li>Fully responsive on desktop, tablet, and mobile</li>
+          {translations.about.features.map((feature) => (
+            <li key={feature}>{feature}</li>
+          ))}
         </ul>
       </section>
     </div>
