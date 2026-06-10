@@ -7,7 +7,7 @@ export function Footer() {
         <p className="footer__text">
           Letter Library — Beautiful templates for heartfelt messages.
         </p>
-        <p className="footer__copy">© {new Date().getFullYear()} Letter Library</p>
+        <p className="footer__copy">Powered by Tamar Abramowitz</p>
       </div>
     </footer>
   );
