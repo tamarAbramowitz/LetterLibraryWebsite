@@ -1,4 +1,4 @@
-import type { LetterFormData, LetterFormErrors, Tone } from '../../types/generate';
+import type { LetterFormData, LetterFormErrors } from '../../types/generate';
 import { TONES } from '../../types/generate';
 import './LetterForm.css';
 
