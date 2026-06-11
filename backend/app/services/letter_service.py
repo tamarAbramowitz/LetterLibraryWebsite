@@ -106,14 +106,30 @@ class LetterService:
         return letter
 
     @classmethod
-    def delete_by_id(cls, letter_id: int, user_id: str) -> bool:
+    def delete_by_id(cls, letter_id: int, user_id: str, *, admin: bool = False) -> bool:
         letters = cls._load_all()
         letter = next((l for l in letters if l.id == letter_id), None)
         if not letter:
             return False
-        if letter.user_id is None:
-            raise PermissionError("Library letters cannot be deleted")
-        if letter.user_id != user_id:
-            raise PermissionError("Not authorized to delete this letter")
+        if not admin:
+            if letter.user_id is None:
+                raise PermissionError("Library letters cannot be deleted")
+            if letter.user_id != user_id:
+                raise PermissionError("Not authorized to delete this letter")
         cls._save_all([l for l in letters if l.id != letter_id])
         return True
+
+    @classmethod
+    def delete_all(cls) -> int:
+        letters = cls._load_all()
+        count = len(letters)
+        cls._save_all([])
+        return count
+
+    @classmethod
+    def delete_all_user_generated(cls) -> int:
+        letters = cls._load_all()
+        remaining = [l for l in letters if l.user_id is None]
+        deleted = len(letters) - len(remaining)
+        cls._save_all(remaining)
+        return deleted

@@ -1,6 +1,7 @@
 import type { Locale } from '../i18n/types';
 import type { Letter, LetterListResponse } from '../types/letter';
 import { getCanonicalCategory, localizeLetter, localizeLetters } from '../utils/localizeLetter';
+import { getAdminHeaders } from '../hooks/useAdmin';
 import { getAuthHeaders, getUserId } from '../utils/userId';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8081';
@@ -48,6 +49,19 @@ export function isLetterOwner(letter: Letter): boolean {
   return isUserGeneratedLetter(letter.id);
 }
 
+export function isSystemLetter(letter: Letter): boolean {
+  return letter.user_id == null;
+}
+
+export function canDeleteLetter(letter: Letter, isAdmin: boolean): boolean {
+  return isAdmin || isLetterOwner(letter);
+}
+
+export function clearAllGeneratedLetters(): void {
+  localStorage.removeItem(GENERATED_STORAGE_KEY);
+  invalidateLettersCache();
+}
+
 function deleteGeneratedLetterFromStorage(id: number): boolean {
   const generated = loadGeneratedFromStorage();
   const filtered = generated.filter((l) => l.id !== id);
@@ -57,7 +71,7 @@ function deleteGeneratedLetterFromStorage(id: number): boolean {
   return true;
 }
 
-export async function deleteLetter(id: number): Promise<void> {
+export async function deleteLetter(id: number, options?: { asAdmin?: boolean }): Promise<void> {
   if (USE_STATIC_DATA) {
     if (!deleteGeneratedLetterFromStorage(id)) {
       throw new Error('Letter not found');
@@ -66,9 +80,14 @@ export async function deleteLetter(id: number): Promise<void> {
     return;
   }
 
+  const headers = {
+    ...getAuthHeaders(),
+    ...(options?.asAdmin ? getAdminHeaders() : {}),
+  };
+
   const response = await fetch(`${API_BASE}/letters/${id}`, {
     method: 'DELETE',
-    headers: getAuthHeaders(),
+    headers,
   });
 
   if (response.status === 403) {

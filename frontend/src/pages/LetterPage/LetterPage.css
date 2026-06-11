@@ -93,6 +93,15 @@
   margin-bottom: 2rem;
 }
 
+.letter-page__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
 .letter-page__category {
   display: inline-block;
   font-size: 0.8rem;
@@ -100,7 +109,26 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--color-accent);
-  margin-bottom: 0.75rem;
+}
+
+.letter-page__source {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+}
+
+.letter-page__source--system {
+  background: rgba(52, 152, 219, 0.15);
+  color: #2980b9;
+}
+
+.letter-page__source--user {
+  background: rgba(155, 89, 182, 0.15);
+  color: #8e44ad;
 }
 
 .letter-page__title {

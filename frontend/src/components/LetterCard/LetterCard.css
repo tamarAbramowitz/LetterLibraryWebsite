@@ -89,6 +89,14 @@
   flex: 1;
 }
 
+.letter-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
 .letter-card__category {
   display: inline-block;
   font-size: 0.75rem;
@@ -96,7 +104,26 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--color-accent);
-  margin-bottom: 0.5rem;
+}
+
+.letter-card__source {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
+}
+
+.letter-card__source--system {
+  background: rgba(52, 152, 219, 0.15);
+  color: #2980b9;
+}
+
+.letter-card__source--user {
+  background: rgba(155, 89, 182, 0.15);
+  color: #8e44ad;
 }
 
 .letter-card__title {

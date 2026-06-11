@@ -1,0 +1,109 @@
+.admin-panel {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-accent);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.admin-panel__badge {
+  padding: 0.3rem 0.75rem;
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.admin-panel__logout {
+  border: none;
+  background: none;
+  color: var(--color-text-muted);
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.admin-panel__logout:hover {
+  color: var(--color-accent);
+}
+
+.admin-panel__hint {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin: 0 0 1rem;
+}
+
+.admin-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.admin-panel__btn {
+  padding: 0.6rem 1.1rem;
+  border-radius: var(--radius-full);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-panel__btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.admin-panel__btn--danger {
+  border: none;
+  background: #e74c3c;
+  color: white;
+}
+
+.admin-panel__btn--danger:hover:not(:disabled) {
+  background: #c0392b;
+}
+
+.admin-panel__btn--danger-outline {
+  border: 1.5px solid #e74c3c;
+  background: transparent;
+  color: #e74c3c;
+}
+
+.admin-panel__btn--danger-outline:hover:not(:disabled) {
+  background: rgba(231, 76, 60, 0.1);
+}
+
+.admin-panel__btn--secondary {
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.admin-panel__btn--secondary:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.admin-panel__success {
+  font-size: 0.85rem;
+  color: #27ae60;
+  margin: 0.75rem 0 0;
+}
+
+.admin-panel__error {
+  font-size: 0.85rem;
+  color: #e74c3c;
+  margin: 0.75rem 0 0;
+}

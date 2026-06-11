@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { deleteLetter, fetchLetter, isLetterOwner } from '../../api/letters';
+import { canDeleteLetter, deleteLetter, fetchLetter, isSystemLetter } from '../../api/letters';
 import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
 import { LetterIllustration } from '../../components/LetterIllustration/LetterIllustration';
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
 import { ReadingProgress } from '../../components/ReadingProgress/ReadingProgress';
+import { useAdmin } from '../../hooks/useAdmin';
 import { useFavorites } from '../../hooks/useFavorites';
 import { useLocale } from '../../i18n/LocaleContext';
 import type { Letter } from '../../types/letter';
@@ -21,9 +22,10 @@ export function LetterPage() {
   const [shareMessage, setShareMessage] = useState('');
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const { isFavorite, toggleFavorite, removeFavorite } = useFavorites();
+  const { isAdmin } = useAdmin();
 
   const letterId = id ? Number(id) : null;
-  const canDelete = letter !== null && isLetterOwner(letter);
+  const canDelete = letter !== null && canDeleteLetter(letter, isAdmin);
 
   const loadLetter = useCallback(async () => {
     if (!letterId) return;
@@ -70,12 +72,12 @@ export function LetterPage() {
   };
 
   const handleDelete = async () => {
-    if (!letterId || !letter || !isLetterOwner(letter)) return;
+    if (!letterId || !letter || !canDeleteLetter(letter, isAdmin)) return;
     if (!window.confirm(t('letterPage.deleteConfirm'))) return;
 
     setDeleteError(null);
     try {
-      await deleteLetter(letterId);
+      await deleteLetter(letterId, { asAdmin: isAdmin });
       removeFavorite(letterId);
       navigate('/');
     } catch {
@@ -151,7 +153,14 @@ export function LetterPage() {
       {deleteError && <p className="letter-page__error-toast no-print" role="alert">{deleteError}</p>}
 
       <header className="letter-page__header">
-        <span className="letter-page__category">{letter.category}</span>
+        <div className="letter-page__meta">
+          <span className="letter-page__category">{letter.category}</span>
+          {isAdmin && (
+            <span className={`letter-page__source letter-page__source--${isSystemLetter(letter) ? 'system' : 'user'}`}>
+              {isSystemLetter(letter) ? t('admin.badgeSystem') : t('admin.badgeUser')}
+            </span>
+          )}
+        </div>
         <h1 className="letter-page__title">{letter.title}</h1>
         <p className="letter-page__meta">{t('letterPage.minRead', { minutes: readingTime })}</p>
       </header>

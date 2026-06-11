@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { deleteLetter, fetchLetters, invalidateLettersCache } from '../../api/letters';
+import { AdminLoginModal } from '../../components/AdminLoginModal/AdminLoginModal';
+import { AdminPanel } from '../../components/AdminPanel/AdminPanel';
 import { CategoryFilter } from '../../components/CategoryFilter/CategoryFilter';
 import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
 import { LetterCard } from '../../components/LetterCard/LetterCard';
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
 import { Pagination } from '../../components/Pagination/Pagination';
 import { SearchBar } from '../../components/SearchBar/SearchBar';
+import { useAdmin } from '../../hooks/useAdmin';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useFavorites } from '../../hooks/useFavorites';
 import { translateCategory } from '../../i18n/categories';
@@ -27,9 +30,11 @@ export function HomePage() {
   const [category, setCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
 
   const debouncedSearch = useDebounce(search);
   const { isFavorite, toggleFavorite, removeFavorite } = useFavorites();
+  const { isAdmin, login, logout } = useAdmin();
 
   const loadLetters = useCallback(async () => {
     setLoading(true);
@@ -66,12 +71,17 @@ export function HomePage() {
   const handleDeleteLetter = async (letterId: number) => {
     if (!window.confirm(t('letterPage.deleteConfirm'))) return;
     try {
-      await deleteLetter(letterId);
+      await deleteLetter(letterId, { asAdmin: isAdmin });
       removeFavorite(letterId);
       loadLetters();
     } catch {
       window.alert(t('letterPage.deleteError'));
     }
+  };
+
+  const handleAdminLoginSuccess = () => {
+    login();
+    setShowAdminLogin(false);
   };
 
   const countText = loading
@@ -87,11 +97,31 @@ export function HomePage() {
       <section className="hero">
         <h1 className="hero__title">{t('home.heroTitle')}</h1>
         <p className="hero__subtitle">{t('home.heroSubtitle')}</p>
-        <Link to="/create" className="hero__create-btn">
-          <span className="hero__create-icon">✨</span>
-          {t('home.createBtn')}
-        </Link>
+        <div className="hero__actions">
+          <Link to="/create" className="hero__create-btn">
+            <span className="hero__create-icon">✨</span>
+            {t('home.createBtn')}
+          </Link>
+          {!isAdmin && (
+            <button
+              type="button"
+              className="hero__admin-btn"
+              onClick={() => setShowAdminLogin(true)}
+            >
+              {t('admin.loginBtn')}
+            </button>
+          )}
+        </div>
       </section>
+
+      {isAdmin && <AdminPanel onLogout={logout} onLettersChanged={loadLetters} />}
+
+      {showAdminLogin && (
+        <AdminLoginModal
+          onClose={() => setShowAdminLogin(false)}
+          onSuccess={handleAdminLoginSuccess}
+        />
+      )}
 
       <section className="home-page__filters">
         <SearchBar
@@ -130,6 +160,7 @@ export function HomePage() {
                 key={letter.id}
                 letter={letter}
                 isFavorite={isFavorite(letter.id)}
+                isAdmin={isAdmin}
                 onToggleFavorite={toggleFavorite}
                 onDelete={handleDeleteLetter}
               />

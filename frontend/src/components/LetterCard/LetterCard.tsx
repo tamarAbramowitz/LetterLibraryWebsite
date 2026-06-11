@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { isLetterOwner } from '../../api/letters';
+import { canDeleteLetter, isSystemLetter } from '../../api/letters';
 import { useLocale } from '../../i18n/LocaleContext';
 import type { Letter } from '../../types/letter';
 import { LetterIllustration } from '../LetterIllustration/LetterIllustration';
@@ -8,13 +8,15 @@ import './LetterCard.css';
 interface LetterCardProps {
   letter: Letter;
   isFavorite: boolean;
+  isAdmin?: boolean;
   onToggleFavorite: (id: number) => void;
   onDelete?: (id: number) => void;
 }
 
-export function LetterCard({ letter, isFavorite, onToggleFavorite, onDelete }: LetterCardProps) {
+export function LetterCard({ letter, isFavorite, isAdmin = false, onToggleFavorite, onDelete }: LetterCardProps) {
   const { t } = useLocale();
-  const canDelete = isLetterOwner(letter);
+  const canDelete = canDeleteLetter(letter, isAdmin);
+  const showSourceBadge = isAdmin;
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -55,7 +57,14 @@ export function LetterCard({ letter, isFavorite, onToggleFavorite, onDelete }: L
         </button>
       </div>
       <div className="letter-card__body">
-        <span className="letter-card__category">{letter.category}</span>
+        <div className="letter-card__meta">
+          <span className="letter-card__category">{letter.category}</span>
+          {showSourceBadge && (
+            <span className={`letter-card__source letter-card__source--${isSystemLetter(letter) ? 'system' : 'user'}`}>
+              {isSystemLetter(letter) ? t('admin.badgeSystem') : t('admin.badgeUser')}
+            </span>
+          )}
+        </div>
         <h3 className="letter-card__title">{letter.title}</h3>
         <p className="letter-card__description">{letter.description}</p>
       </div>

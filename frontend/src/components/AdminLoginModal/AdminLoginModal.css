@@ -1,0 +1,122 @@
+.admin-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.admin-modal {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--shadow-lg);
+}
+
+.admin-modal--wide {
+  max-width: 440px;
+}
+
+.admin-modal__title {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  margin: 0 0 0.35rem;
+  color: var(--color-text);
+}
+
+.admin-modal__subtitle {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  margin: 0 0 1.25rem;
+}
+
+.admin-modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.admin-modal__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.admin-modal__input {
+  padding: 0.75rem 1rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.admin-modal__input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-light);
+}
+
+.admin-modal__input--error {
+  border-color: #e74c3c;
+}
+
+.admin-modal__input--error:focus {
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15);
+}
+
+.admin-modal__error {
+  font-size: 0.85rem;
+  color: #e74c3c;
+  margin: 0;
+}
+
+.admin-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.admin-modal__btn {
+  padding: 0.6rem 1.1rem;
+  border-radius: var(--radius-full);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-modal__btn--primary {
+  border: none;
+  background: var(--color-accent);
+  color: white;
+}
+
+.admin-modal__btn--primary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.admin-modal__btn--primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.admin-modal__btn--secondary {
+  border: 1.5px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+}
+
+.admin-modal__btn--secondary:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
