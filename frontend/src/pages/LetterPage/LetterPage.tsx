@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { fetchLetter } from '../../api/letters';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { deleteLetter, fetchLetter, isLetterOwner } from '../../api/letters';
 import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
 import { LetterIllustration } from '../../components/LetterIllustration/LetterIllustration';
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
@@ -13,26 +13,31 @@ import './LetterPage.css';
 
 export function LetterPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { locale, t } = useLocale();
   const [letter, setLetter] = useState<Letter | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [shareMessage, setShareMessage] = useState('');
-  const { isFavorite, toggleFavorite } = useFavorites();
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const { isFavorite, toggleFavorite, removeFavorite } = useFavorites();
+
+  const letterId = id ? Number(id) : null;
+  const canDelete = letter !== null && isLetterOwner(letter);
 
   const loadLetter = useCallback(async () => {
-    if (!id) return;
+    if (!letterId) return;
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchLetter(Number(id), locale);
+      const data = await fetchLetter(letterId, locale);
       setLetter(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : t('letterPage.loadError'));
     } finally {
       setLoading(false);
     }
-  }, [id, locale, t]);
+  }, [letterId, locale, t]);
 
   useEffect(() => {
     loadLetter();
@@ -60,6 +65,24 @@ export function LetterPage() {
     }
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleDelete = async () => {
+    if (!letterId || !letter || !isLetterOwner(letter)) return;
+    if (!window.confirm(t('letterPage.deleteConfirm'))) return;
+
+    setDeleteError(null);
+    try {
+      await deleteLetter(letterId);
+      removeFavorite(letterId);
+      navigate('/');
+    } catch {
+      setDeleteError(t('letterPage.deleteError'));
+    }
+  };
+
   if (loading) return <LoadingSpinner />;
   if (error) return <ErrorMessage message={error} onRetry={loadLetter} />;
   if (!letter) return null;
@@ -71,7 +94,7 @@ export function LetterPage() {
     <article className="letter-page">
       <ReadingProgress />
 
-      <div className="letter-page__actions">
+      <div className="letter-page__actions no-print">
         <Link to="/" className="letter-page__back">
           {t('letterPage.back')}
         </Link>
@@ -94,10 +117,38 @@ export function LetterPage() {
             </svg>
             {t('letterPage.share')}
           </button>
+          <button
+            className="letter-page__print"
+            onClick={handlePrint}
+            aria-label={t('letterPage.printAria')}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polyline points="6 9 6 2 18 2 18 9" />
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+              <rect x="6" y="14" width="12" height="8" />
+            </svg>
+            {t('letterPage.print')}
+          </button>
+          {canDelete && (
+            <button
+              className="letter-page__delete"
+              onClick={handleDelete}
+              aria-label={t('letterPage.deleteAria')}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                <line x1="10" y1="11" x2="10" y2="17" />
+                <line x1="14" y1="11" x2="14" y2="17" />
+              </svg>
+              {t('letterPage.delete')}
+            </button>
+          )}
         </div>
       </div>
 
-      {shareMessage && <p className="letter-page__share-toast">{shareMessage}</p>}
+      {shareMessage && <p className="letter-page__share-toast no-print">{shareMessage}</p>}
+      {deleteError && <p className="letter-page__error-toast no-print" role="alert">{deleteError}</p>}
 
       <header className="letter-page__header">
         <span className="letter-page__category">{letter.category}</span>
@@ -105,7 +156,7 @@ export function LetterPage() {
         <p className="letter-page__meta">{t('letterPage.minRead', { minutes: readingTime })}</p>
       </header>
 
-      <div className="letter-page__illustration">
+      <div className="letter-page__illustration no-print">
         <LetterIllustration variant={letter.image} />
       </div>
 

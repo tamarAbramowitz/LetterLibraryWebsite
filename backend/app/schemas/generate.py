@@ -10,11 +10,17 @@ class Tone(str, Enum):
     ENCOURAGING = "Encouraging"
 
 
+class Gender(str, Enum):
+    MALE = "male"
+    FEMALE = "female"
+
+
 class GenerateLetterRequest(BaseModel):
     title: str = Field(..., min_length=2, max_length=120)
     category: str = Field(..., min_length=2, max_length=60)
     description: str = Field(..., min_length=10, max_length=1000)
     tone: Tone
+    gender: Gender = Gender.MALE
 
 
 class GenerateLetterResponse(BaseModel):

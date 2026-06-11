@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { fetchLetters, invalidateLettersCache } from '../../api/letters';
+import { deleteLetter, fetchLetters, invalidateLettersCache } from '../../api/letters';
 import { CategoryFilter } from '../../components/CategoryFilter/CategoryFilter';
 import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
 import { LetterCard } from '../../components/LetterCard/LetterCard';
@@ -29,7 +29,7 @@ export function HomePage() {
   const [error, setError] = useState<string | null>(null);
 
   const debouncedSearch = useDebounce(search);
-  const { isFavorite, toggleFavorite } = useFavorites();
+  const { isFavorite, toggleFavorite, removeFavorite } = useFavorites();
 
   const loadLetters = useCallback(async () => {
     setLoading(true);
@@ -62,6 +62,17 @@ export function HomePage() {
   }, [debouncedSearch, category, locale]);
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
+
+  const handleDeleteLetter = async (letterId: number) => {
+    if (!window.confirm(t('letterPage.deleteConfirm'))) return;
+    try {
+      await deleteLetter(letterId);
+      removeFavorite(letterId);
+      loadLetters();
+    } catch {
+      window.alert(t('letterPage.deleteError'));
+    }
+  };
 
   const countText = loading
     ? t('home.loading')
@@ -120,6 +131,7 @@ export function HomePage() {
                 letter={letter}
                 isFavorite={isFavorite(letter.id)}
                 onToggleFavorite={toggleFavorite}
+                onDelete={handleDeleteLetter}
               />
             ))}
           </div>

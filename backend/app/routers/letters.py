@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 
+from app.auth import get_current_user
 from app.schemas import Letter, LetterListResponse
 from app.services import LetterService
 
@@ -37,3 +38,17 @@ def get_letter(letter_id: int) -> Letter:
     if not letter:
         raise HTTPException(status_code=404, detail="Letter not found")
     return Letter(**letter.to_dict())
+
+
+@router.delete("/{letter_id}", status_code=204)
+def delete_letter(
+    letter_id: int,
+    current_user: str = Depends(get_current_user),
+) -> None:
+    try:
+        deleted = LetterService.delete_by_id(letter_id, current_user)
+    except PermissionError as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Letter not found")

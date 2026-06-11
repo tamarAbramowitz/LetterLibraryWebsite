@@ -8,6 +8,7 @@ class Letter(BaseModel):
     description: str
     image: str
     content: str
+    user_id: str | None = None
 
 
 class LetterListResponse(BaseModel):

@@ -2,7 +2,7 @@ import os
 
 import httpx
 
-from app.schemas.generate import GenerateLetterRequest, Tone
+from app.schemas.generate import Gender, GenerateLetterRequest, Tone
 
 TONE_GUIDANCE = {
     Tone.FRIENDLY: "warm, conversational, and approachable — like writing to a close friend",
@@ -11,25 +11,41 @@ TONE_GUIDANCE = {
     Tone.ENCOURAGING: "uplifting, supportive, and motivating — inspire confidence and hope",
 }
 
+GENDER_GUIDANCE = {
+    Gender.MALE: (
+        "The recipient is male. Address him strictly as a male throughout the entire letter — "
+        "use masculine greetings, pronouns (he/him/his), and any gendered language appropriate "
+        "for a male recipient."
+    ),
+    Gender.FEMALE: (
+        "The recipient is female. Address her strictly as a female throughout the entire letter — "
+        "use feminine greetings, pronouns (she/her/hers), and any gendered language appropriate "
+        "for a female recipient."
+    ),
+}
+
 
 class AIService:
     @staticmethod
     def _build_prompt(request: GenerateLetterRequest) -> str:
         tone_hint = TONE_GUIDANCE[request.tone]
+        gender_hint = GENDER_GUIDANCE[request.gender]
         return f"""Write a complete personal letter with the following details:
 
 Title: {request.title}
 Category: {request.category}
 Context: {request.description}
 Tone: {request.tone.value} — {tone_hint}
+Recipient gender: {request.gender.value} — {gender_hint}
 
 Requirements:
 - Write 300-450 words
-- Start with an appropriate greeting (e.g., "Dear Friend,")
+- Start with an appropriate greeting for the recipient's gender
 - End with a warm, natural closing and signature line
 - Make it feel personal, realistic, and emotionally engaging
 - Do NOT include a subject line or metadata — only the letter body
 - Use paragraph breaks between sections (blank line between paragraphs)
+- If writing in Hebrew, use grammatically correct gendered forms (זכר/נקבה) matching the recipient throughout
 """
 
     @classmethod
@@ -71,10 +87,11 @@ Requirements:
         title = request.title
         desc = request.description
         category = request.category
+        is_female = request.gender == Gender.FEMALE
 
         openings = {
             Tone.FRIENDLY: "Dear Friend,",
-            Tone.FORMAL: "Dear Sir or Madam,",
+            Tone.FORMAL: "Dear Madam," if is_female else "Dear Sir,",
             Tone.EMOTIONAL: "Dear Friend,",
             Tone.ENCOURAGING: "Dear Friend,",
         }
@@ -85,6 +102,7 @@ Requirements:
             Tone.ENCOURAGING: "Believing in you always,\nYour supporter",
         }
 
+        pronoun = "she" if is_female else "he"
         body_styles = {
             Tone.FRIENDLY: (
                 f"I wanted to take a moment to write about {title.lower()}. "
@@ -124,8 +142,8 @@ Requirements:
                 f"before — in quiet moments and in difficult ones — and I know it has not disappeared. "
                 f"It is still there, waiting for you to draw on it.\n\n"
                 f"Take this one step at a time. You do not need to have everything figured out today. "
-                f"What you need is to keep going, and to remember that someone is cheering for you "
-                f"every step of the way."
+                f"What you need is to keep going, and to remember that someone is cheering for "
+                f"{pronoun} every step of the way."
             ),
         }
 

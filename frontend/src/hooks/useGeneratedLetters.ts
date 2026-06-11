@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { Letter } from '../types/letter';
 import { categoryToImage } from '../utils/letterGenerator';
+import { getUserId } from '../utils/userId';
 
 const STORAGE_KEY = 'letter-library-generated';
 const ID_OFFSET = 10000;
@@ -26,6 +27,7 @@ export function useGeneratedLetters() {
       ...letter,
       id: letter.id && letter.id > 0 ? letter.id : ID_OFFSET + Date.now(),
       image: letter.image || categoryToImage(letter.category),
+      user_id: letter.user_id ?? getUserId(),
     };
     setGenerated((prev) => [newLetter, ...prev.filter((l) => l.id !== newLetter.id)]);
     return newLetter;

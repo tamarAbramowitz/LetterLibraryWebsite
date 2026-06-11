@@ -1,5 +1,5 @@
 import type { Locale } from '../i18n/types';
-import type { GenerateLetterRequest, Tone } from '../types/generate';
+import type { Gender, GenerateLetterRequest, Tone } from '../types/generate';
 
 type ToneStyle = {
   opening: string;
@@ -60,17 +60,17 @@ const TONE_GUIDANCE_EN: Record<Tone, ToneStyle> = {
   },
 };
 
-const TONE_GUIDANCE_HE: Record<Tone, ToneStyle> = {
+const TONE_GUIDANCE_HE_MALE: Record<Tone, ToneStyle> = {
   Friendly: {
-    opening: 'חבר/ה יקר/ה,',
-    closing: 'בחום ובידידות,\nחבר/ה שלך',
+    opening: 'חבר יקר,',
+    closing: 'בחום ובידידות,\nחבר שלך',
     body: (r) =>
       `רציתי לקחת רגע ולכתוב על ${r.title}. ${r.description}\n\n` +
       `יש משהו מיוחד ברגעים כאלה — הם מזכירים לנו מה באמת חשוב. ` +
       `בין אם אנחנו חוגגים, מהרהרים או פשוט משתפים את מה שאנחנו מרגישים, ` +
       `למכתבים יש דרך לתפוס דברים שמילים מדוברות לפעמים לא מצליחות.\n\n` +
       `אני מקווה שהמסר הזה מגיע אליך בשלום ומביא חיוך ליום שלך. ` +
-      `דע/י שאת/ה נמצא/ת במחשבות שלי, ושהמכתב הזה בנושא ${r.category} ` +
+      `דע שאתה נמצא במחשבות שלי, ושהמכתב הזה בנושא ${r.category} ` +
       `מגיע ממקום של אכפתיות אמיתית.`,
   },
   Formal: {
@@ -80,36 +80,128 @@ const TONE_GUIDANCE_HE: Record<Tone, ToneStyle> = {
       `אני פונה אליך בנושא ${r.title}. ${r.description}\n\n` +
       `אבקש לבטא את מחשבותיי באירוע זה בכבוד ובהתאם לחשיבותו. ` +
       `נושאים של ${r.category} ראויים להכרה ברורה ומכובדת, ואני מקווה שהמילים הללו משקפות זאת.\n\n` +
-      `אנא קבל/י מכתב זה כביטוי כן של רגשותיי בנושא. ` +
-      `אני מאמין/ה שהוא יתקבל ברוח שבה נכתב.`,
+      `אנא קבל מכתב זה כביטוי כן של רגשותיי בנושא. ` +
+      `אני מאמין שהוא יתקבל ברוח שבה נכתב.`,
   },
   Emotional: {
-    opening: 'חבר/ה יקר/ה,',
+    opening: 'חבר יקר,',
     closing: 'מכל הלב,\nמישהו שאכפת לו ממך מאוד',
     body: (r) =>
-      `אני נושא/ת את המילים האלה בלב כבר זמן מה. ${r.description}\n\n` +
-      `כשאני חושב/ת על ${r.title}, אני מרגיש/ה עומק רגשי שלא תמיד קל לבטא. ` +
+      `אני נושא את המילים האלה בלב כבר זמן מה. ${r.description}\n\n` +
+      `כשאני חושב על ${r.title}, אני מרגיש עומק רגשי שלא תמיד קל לבטא. ` +
       `אבל יש רגשות שמגיעים להיאמר — או להיכתב — גם כשמציאת המילים הנכונות דורשת אומץ.\n\n` +
-      `המכתב הזה הוא הניסיון שלי לכבד את מה שאני מרגיש/ה. אני מקווה שתרגיש/י את הכנות שבכל שורה. ` +
-      `את/ה חשוב/ה יותר ממה שאולי נדמה לך, והמסר הזה בנושא ${r.category} ` +
+      `המכתב הזה הוא הניסיון שלי לכבד את מה שאני מרגיש. אני מקווה שתרגיש את הכנות שבכל שורה. ` +
+      `אתה חשוב יותר ממה שאולי נדמה לך, והמסר הזה בנושא ${r.category} ` +
       `הוא הדרך שלי להגיד לך את זה.`,
   },
   Encouraging: {
-    opening: 'חבר/ה יקר/ה,',
-    closing: 'תמיד מאמין/ה בך,\nהמעודד/ת שלך',
+    opening: 'חבר יקר,',
+    closing: 'תמיד מאמין בך,\nהמעודד שלך',
     body: (r) =>
-      `אני כותב/ת כי אני מאמין/ה בך, וכי ${r.description.replace(/\.$/, '')}. ` +
-      `זה עוסק ב${r.title}, ואני רוצה שתדע/י שאת/ה מסוגל/ת ` +
-      `להרבה יותר ממה שאת/ה לפעמים נותן/ת לעצמך.\n\n` +
+      `אני כותב כי אני מאמין בך, וכי ${r.description.replace(/\.$/, '')}. ` +
+      `זה עוסק ב${r.title}, ואני רוצה שתדע שאתה מסוגל ` +
+      `להרבה יותר ממה שאתה לפעמים נותן לעצמך.\n\n` +
       `כל אתגר נושא בתוכו זרע של צמיחה. ראיתי את הכוח שלך בעבר — ברגעים שקטים וגם בקשים — ` +
-      `והוא לא נעלם. הוא עדיין שם, מחכה שתשתמש/י בו.\n\n` +
-      `קח/י את זה צעד אחרי צעד. לא חייבים להבין הכול היום. ` +
+      `והוא לא נעלם. הוא עדיין שם, מחכה שתשתמש בו.\n\n` +
+      `קח את זה צעד אחרי צעד. לא חייבים להבין הכול היום. ` +
       `מה שצריך זה להמשיך, ולזכור שמישהו מעודד אותך בכל צעד.`,
   },
 };
 
+const TONE_GUIDANCE_HE_FEMALE: Record<Tone, ToneStyle> = {
+  Friendly: {
+    opening: 'חברה יקרה,',
+    closing: 'בחום ובידידות,\nחברה שלך',
+    body: (r) =>
+      `רציתי לקחת רגע ולכתוב על ${r.title}. ${r.description}\n\n` +
+      `יש משהו מיוחד ברגעים כאלה — הם מזכירים לנו מה באמת חשוב. ` +
+      `בין אם אנחנו חוגגים, מהרהרים או פשוט משתפים את מה שאנחנו מרגישים, ` +
+      `למכתבים יש דרך לתפוס דברים שמילים מדוברות לפעמים לא מצליחות.\n\n` +
+      `אני מקווה שהמסר הזה מגיע אלייך בשלום ומביא חיוך ליום שלך. ` +
+      `דעי שאת נמצאת במחשבות שלי, ושהמכתב הזה בנושא ${r.category} ` +
+      `מגיע ממקום של אכפתיות אמיתית.`,
+  },
+  Formal: {
+    opening: 'לכבוד,',
+    closing: 'בכבוד רב,\nבברכה',
+    body: (r) =>
+      `אני פונה אלייך בנושא ${r.title}. ${r.description}\n\n` +
+      `אבקשי לבטא את מחשבותיי באירוע זה בכבוד ובהתאם לחשיבותו. ` +
+      `נושאים של ${r.category} ראויים להכרה ברורה ומכובדת, ואני מקווה שהמילים הללו משקפות זאת.\n\n` +
+      `אנא קבלי מכתב זה כביטוי כן של רגשותיי בנושא. ` +
+      `אני מאמינה שהוא יתקבל ברוח שבה נכתב.`,
+  },
+  Emotional: {
+    opening: 'חברה יקרה,',
+    closing: 'מכל הלב,\nמישהי שאכפת לה ממך מאוד',
+    body: (r) =>
+      `אני נושאת את המילים האלה בלב כבר זמן מה. ${r.description}\n\n` +
+      `כשאני חושבת על ${r.title}, אני מרגישה עומק רגשי שלא תמיד קל לבטא. ` +
+      `אבל יש רגשות שמגיעים להיאמר — או להיכתב — גם כשמציאת המילים הנכונות דורשת אומץ.\n\n` +
+      `המכתב הזה הוא הניסיון שלי לכבד את מה שאני מרגישה. אני מקווה שתרגישי את הכנות שבכל שורה. ` +
+      `את חשובה יותר ממה שאולי נדמה לך, והמסר הזה בנושא ${r.category} ` +
+      `הוא הדרך שלי להגיד לך את זה.`,
+  },
+  Encouraging: {
+    opening: 'חברה יקרה,',
+    closing: 'תמיד מאמינה בך,\nהמעודדת שלך',
+    body: (r) =>
+      `אני כותבת כי אני מאמינה בך, וכי ${r.description.replace(/\.$/, '')}. ` +
+      `זה עוסק ב${r.title}, ואני רוצה שתדעי שאת מסוגלת ` +
+      `להרבה יותר ממה שאת לפעמים נותנת לעצמך.\n\n` +
+      `כל אתגר נושא בתוכו זרע של צמיחה. ראיתי את הכוח שלך בעבר — ברגעים שקטים וגם בקשים — ` +
+      `והוא לא נעלם. הוא עדיין שם, מחכה שתשתמשי בו.\n\n` +
+      `קחי את זה צעד אחרי צעד. לא חייבים להבין הכול היום. ` +
+      `מה שצריך זה להמשיך, ולזכור שמישהי מעודדת אותך בכל צעד.`,
+  },
+};
+
+function getToneGuidance(locale: Locale, gender: Gender): Record<Tone, ToneStyle> {
+  if (locale === 'he') {
+    return gender === 'female' ? TONE_GUIDANCE_HE_FEMALE : TONE_GUIDANCE_HE_MALE;
+  }
+
+  if (gender === 'female') {
+    return {
+      ...TONE_GUIDANCE_EN,
+      Formal: { ...TONE_GUIDANCE_EN.Formal, opening: 'Dear Madam,' },
+      Encouraging: {
+        ...TONE_GUIDANCE_EN.Encouraging,
+        body: (r) =>
+          `I am writing because I believe in you, and because ${r.description.replace(/\.$/, '').toLowerCase()}. ` +
+          `This is about ${r.title.toLowerCase()}, and I want you to know that you are capable ` +
+          `of more than you sometimes give yourself credit for.\n\n` +
+          `Every challenge carries within it the seed of growth. I have seen your strength ` +
+          `before — in quiet moments and in difficult ones — and I know it has not disappeared. ` +
+          `It is still there, waiting for you to draw on it.\n\n` +
+          `Take this one step at a time. You do not need to have everything figured out today. ` +
+          `What you need is to keep going, and to remember that someone is cheering for her ` +
+          `every step of the way.`,
+      },
+    };
+  }
+
+  return {
+    ...TONE_GUIDANCE_EN,
+    Formal: { ...TONE_GUIDANCE_EN.Formal, opening: 'Dear Sir,' },
+    Encouraging: {
+      ...TONE_GUIDANCE_EN.Encouraging,
+      body: (r) =>
+        `I am writing because I believe in you, and because ${r.description.replace(/\.$/, '').toLowerCase()}. ` +
+        `This is about ${r.title.toLowerCase()}, and I want you to know that you are capable ` +
+        `of more than you sometimes give yourself credit for.\n\n` +
+        `Every challenge carries within it the seed of growth. I have seen your strength ` +
+        `before — in quiet moments and in difficult ones — and I know it has not disappeared. ` +
+        `It is still there, waiting for you to draw on it.\n\n` +
+        `Take this one step at a time. You do not need to have everything figured out today. ` +
+        `What you need is to keep going, and to remember that someone is cheering for him ` +
+        `every step of the way.`,
+    },
+  };
+}
+
 export function generateLetterContent(request: GenerateLetterRequest, locale: Locale = 'en'): string {
-  const guidance = locale === 'he' ? TONE_GUIDANCE_HE : TONE_GUIDANCE_EN;
+  const guidance = getToneGuidance(locale, request.gender);
   const style = guidance[request.tone];
   return `${style.opening}\n\n${style.body(request)}\n\n${style.closing}`;
 }

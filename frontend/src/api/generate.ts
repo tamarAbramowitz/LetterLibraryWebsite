@@ -4,6 +4,7 @@ import type { GenerateLetterRequest, GenerateLetterResponse } from '../types/gen
 import type { Letter } from '../types/letter';
 import { attachBilingualTranslations } from '../utils/bilingualLetter';
 import { categoryToImage, generateLetterContent } from '../utils/letterGenerator';
+import { getAuthHeaders, getUserId } from '../utils/userId';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8081';
 const USE_STATIC_DATA = import.meta.env.VITE_USE_STATIC_DATA === 'true';
@@ -22,6 +23,7 @@ async function generateLocally(
     description: request.description,
     image: categoryToImage(canonicalCategory),
     content,
+    user_id: getUserId(),
     createdLocale: locale,
   };
   const letter = attachBilingualTranslations(
@@ -45,7 +47,7 @@ export async function generateLetter(
   try {
     const response = await fetch(`${API_BASE}/generate-letter`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
       body: JSON.stringify(canonicalRequest),
     });
 

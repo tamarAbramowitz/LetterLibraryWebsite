@@ -17,6 +17,7 @@ const INITIAL_FORM: LetterFormData = {
   category: '',
   description: '',
   tone: 'Friendly',
+  gender: 'male',
 };
 
 export function GenerateLetterPage() {
@@ -34,7 +35,12 @@ export function GenerateLetterPage() {
   const handleChange = (field: keyof LetterFormData, value: string) => {
     setForm((prev) => ({
       ...prev,
-      [field]: field === 'tone' ? (value as LetterFormData['tone']) : value,
+      [field]:
+        field === 'tone'
+          ? (value as LetterFormData['tone'])
+          : field === 'gender'
+            ? (value as LetterFormData['gender'])
+            : value,
     }));
     setErrors((prev) => ({ ...prev, [field]: undefined }));
     setApiError(null);
@@ -83,14 +89,14 @@ export function GenerateLetterPage() {
 
   return (
     <div className="generate-page">
-      <div className="generate-page__header">
+      <div className="generate-page__header no-print">
         <Link to="/" className="generate-page__back">{t('create.back')}</Link>
         <h1 className="generate-page__title">{t('create.title')}</h1>
         <p className="generate-page__subtitle">{t('create.subtitle')}</p>
       </div>
 
       <div className="generate-page__layout">
-        <section className="generate-page__form-section">
+        <section className="generate-page__form-section no-print">
           <h2 className="generate-page__section-title">{t('create.detailsTitle')}</h2>
           <LetterForm
             data={form}

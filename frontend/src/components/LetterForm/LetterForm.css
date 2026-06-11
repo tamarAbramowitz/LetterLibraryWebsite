@@ -54,13 +54,13 @@
   color: #e74c3c;
 }
 
-.letter-form__tones {
+.letter-form__options {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
 
-.letter-form__tone {
+.letter-form__option {
   padding: 0.5rem 1rem;
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-full);
@@ -72,18 +72,18 @@
   transition: all 0.2s ease;
 }
 
-.letter-form__tone:hover:not(:disabled) {
+.letter-form__option:hover:not(:disabled) {
   border-color: var(--color-accent);
   color: var(--color-accent);
 }
 
-.letter-form__tone--active {
+.letter-form__option--active {
   background: var(--color-accent);
   border-color: var(--color-accent);
   color: white;
 }
 
-.letter-form__tone:disabled {
+.letter-form__option:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }

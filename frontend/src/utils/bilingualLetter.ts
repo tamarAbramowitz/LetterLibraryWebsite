@@ -60,6 +60,7 @@ export function ensureBilingualLetter(letter: Letter): Letter {
     category: categoryToEnglish(letter.category),
     description: letter.description,
     tone: 'Friendly',
+    gender: 'male',
   };
 
   return attachBilingualTranslations(letter, form, createdLocale);

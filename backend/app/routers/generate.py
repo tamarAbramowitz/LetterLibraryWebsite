@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
+from app.auth import get_current_user
 from app.schemas.generate import GenerateLetterRequest, GenerateLetterResponse
 from app.schemas.letter import Letter
 from app.services.ai_service import AIService
@@ -9,7 +10,10 @@ router = APIRouter(tags=["generate"])
 
 
 @router.post("/generate-letter", response_model=GenerateLetterResponse)
-async def generate_letter(request: GenerateLetterRequest) -> GenerateLetterResponse:
+async def generate_letter(
+    request: GenerateLetterRequest,
+    current_user: str = Depends(get_current_user),
+) -> GenerateLetterResponse:
     try:
         content = await AIService.generate_letter_content(request)
     except Exception as exc:
@@ -23,6 +27,7 @@ async def generate_letter(request: GenerateLetterRequest) -> GenerateLetterRespo
         category=request.category,
         description=request.description,
         content=content,
+        user_id=current_user,
     )
 
     return GenerateLetterResponse(letter=Letter(**letter.to_dict()), saved=True)

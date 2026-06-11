@@ -30,7 +30,9 @@
 }
 
 .letter-page__favorite,
-.letter-page__share {
+.letter-page__share,
+.letter-page__print,
+.letter-page__delete {
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -46,15 +48,23 @@
 }
 
 .letter-page__favorite svg,
-.letter-page__share svg {
+.letter-page__share svg,
+.letter-page__print svg,
+.letter-page__delete svg {
   width: 16px;
   height: 16px;
 }
 
 .letter-page__favorite:hover,
-.letter-page__share:hover {
+.letter-page__share:hover,
+.letter-page__print:hover {
   border-color: var(--color-accent);
   color: var(--color-accent);
+}
+
+.letter-page__delete:hover {
+  border-color: #e74c3c;
+  color: #e74c3c;
 }
 
 .letter-page__favorite--active {
@@ -62,12 +72,20 @@
   border-color: #e74c3c;
 }
 
-.letter-page__share-toast {
+.letter-page__share-toast,
+.letter-page__error-toast {
   text-align: center;
   font-size: 0.85rem;
-  color: var(--color-accent);
   margin: -1rem 0 1rem;
   animation: fadeIn 0.3s ease;
+}
+
+.letter-page__share-toast {
+  color: var(--color-accent);
+}
+
+.letter-page__error-toast {
+  color: #e74c3c;
 }
 
 .letter-page__header {

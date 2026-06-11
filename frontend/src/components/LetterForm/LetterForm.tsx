@@ -1,7 +1,7 @@
 import { CATEGORY_SUGGESTIONS_EN, translateCategory } from '../../i18n/categories';
 import { useLocale } from '../../i18n/LocaleContext';
 import type { LetterFormData, LetterFormErrors } from '../../types/generate';
-import { TONES } from '../../types/generate';
+import { GENDERS, TONES } from '../../types/generate';
 import './LetterForm.css';
 
 interface LetterFormProps {
@@ -71,15 +71,35 @@ export function LetterForm({ data, errors, disabled, onChange, onSubmit }: Lette
       </div>
 
       <div className="letter-form__field">
+        <span className="letter-form__label">{t('form.genderLabel')}</span>
+        <div className="letter-form__options" role="radiogroup" aria-label={t('form.genderAria')}>
+          {GENDERS.map((gender) => (
+            <button
+              key={gender}
+              type="button"
+              role="radio"
+              aria-checked={data.gender === gender}
+              className={`letter-form__option ${data.gender === gender ? 'letter-form__option--active' : ''}`}
+              onClick={() => onChange('gender', gender)}
+              disabled={disabled}
+            >
+              {t(`genders.${gender}`)}
+            </button>
+          ))}
+        </div>
+        {errors.gender && <span className="letter-form__error">{errors.gender}</span>}
+      </div>
+
+      <div className="letter-form__field">
         <span className="letter-form__label">{t('form.toneLabel')}</span>
-        <div className="letter-form__tones" role="radiogroup" aria-label={t('form.toneAria')}>
+        <div className="letter-form__options" role="radiogroup" aria-label={t('form.toneAria')}>
           {TONES.map((tone) => (
             <button
               key={tone}
               type="button"
               role="radio"
               aria-checked={data.tone === tone}
-              className={`letter-form__tone ${data.tone === tone ? 'letter-form__tone--active' : ''}`}
+              className={`letter-form__option ${data.tone === tone ? 'letter-form__option--active' : ''}`}
               onClick={() => onChange('tone', tone)}
               disabled={disabled}
             >

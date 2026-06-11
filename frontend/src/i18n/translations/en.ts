@@ -39,11 +39,6 @@ export const en = {
     all: 'All',
     filterAria: 'Filter by category',
   },
-  letterCard: {
-    read: 'Read letter →',
-    addFavorite: 'Add to favorites',
-    removeFavorite: 'Remove from favorites',
-  },
   letterPage: {
     back: '← Back to Library',
     share: 'Share',
@@ -54,6 +49,18 @@ export const en = {
     minRead: '{{minutes}} min read',
     addFavorite: 'Add to favorites',
     removeFavorite: 'Remove from favorites',
+    delete: 'Delete',
+    deleteAria: 'Delete this letter',
+    deleteConfirm: 'Delete this letter from your library? This cannot be undone.',
+    deleteError: 'You are not allowed to delete this letter.',
+    print: 'Print',
+    printAria: 'Print this letter',
+  },
+  letterCard: {
+    read: 'Read letter →',
+    addFavorite: 'Add to favorites',
+    removeFavorite: 'Remove from favorites',
+    deleteAria: 'Delete letter',
   },
   about: {
     title: 'About Letter Library',
@@ -99,6 +106,8 @@ export const en = {
       'Describe what the letter should be about, who it is for, and what you want to express...',
     toneLabel: 'Tone',
     toneAria: 'Letter tone',
+    genderLabel: 'Recipient gender',
+    genderAria: 'Recipient gender',
     generating: 'Generating...',
     submit: 'Generate Letter',
     errors: {
@@ -108,7 +117,12 @@ export const en = {
       descriptionRequired: 'Description is required',
       descriptionMin: 'Description must be at least 10 characters',
       toneRequired: 'Please select a tone',
+      genderRequired: 'Please select a gender',
     },
+  },
+  genders: {
+    male: 'Male',
+    female: 'Female',
   },
   tones: {
     Friendly: 'Friendly',
@@ -123,6 +137,8 @@ export const en = {
     save: 'Save Letter',
     view: 'View Letter',
     browse: 'Browse Library',
+    print: 'Print',
+    printAria: 'Print this letter',
   },
   pagination: {
     aria: 'Pagination',

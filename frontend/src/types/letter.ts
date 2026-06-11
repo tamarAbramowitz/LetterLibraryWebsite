@@ -14,6 +14,7 @@ export interface Letter {
   description: string;
   image: string;
   content: string;
+  user_id?: string | null;
   createdLocale?: Locale;
   translations?: Partial<Record<Locale, LetterContent>>;
 }

@@ -1,6 +1,7 @@
 import type { Locale } from '../i18n/types';
 import type { Letter, LetterListResponse } from '../types/letter';
 import { getCanonicalCategory, localizeLetter, localizeLetters } from '../utils/localizeLetter';
+import { getAuthHeaders, getUserId } from '../utils/userId';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8081';
 const USE_STATIC_DATA = import.meta.env.VITE_USE_STATIC_DATA === 'true';
@@ -34,6 +35,46 @@ function mergeLetters(base: Letter[], generated: Letter[]): Letter[] {
 
 export function invalidateLettersCache(): void {
   staticLettersCache = null;
+}
+
+export function isUserGeneratedLetter(id: number): boolean {
+  return loadGeneratedFromStorage().some((l) => l.id === id);
+}
+
+export function isLetterOwner(letter: Letter): boolean {
+  if (letter.user_id) {
+    return letter.user_id === getUserId();
+  }
+  return isUserGeneratedLetter(letter.id);
+}
+
+function deleteGeneratedLetterFromStorage(id: number): boolean {
+  const generated = loadGeneratedFromStorage();
+  const filtered = generated.filter((l) => l.id !== id);
+  if (filtered.length === generated.length) return false;
+  localStorage.setItem(GENERATED_STORAGE_KEY, JSON.stringify(filtered));
+  invalidateLettersCache();
+  return true;
+}
+
+export async function deleteLetter(id: number): Promise<void> {
+  deleteGeneratedLetterFromStorage(id);
+  invalidateLettersCache();
+
+  if (USE_STATIC_DATA) return;
+
+  const response = await fetch(`${API_BASE}/letters/${id}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  });
+
+  if (response.status === 404) return;
+  if (response.status === 403) {
+    throw new Error('Not authorized to delete this letter');
+  }
+  if (!response.ok) {
+    throw new Error('Failed to delete letter');
+  }
 }
 
 async function loadStaticLetters(): Promise<Letter[]> {

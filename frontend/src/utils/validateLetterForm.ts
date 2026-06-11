@@ -1,6 +1,6 @@
 import type { TranslationKey } from '../i18n/translations/en';
 import type { LetterFormData, LetterFormErrors } from '../types/generate';
-import { TONES } from '../types/generate';
+import { GENDERS, TONES } from '../types/generate';
 
 type FormErrors = TranslationKey['form']['errors'];
 
@@ -25,6 +25,10 @@ export function validateLetterForm(data: LetterFormData, messages: FormErrors): 
 
   if (!TONES.includes(data.tone)) {
     errors.tone = messages.toneRequired;
+  }
+
+  if (!GENDERS.includes(data.gender)) {
+    errors.gender = messages.genderRequired;
   }
 
   return errors;

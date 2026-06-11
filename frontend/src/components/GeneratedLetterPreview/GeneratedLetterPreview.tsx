@@ -23,14 +23,18 @@ export function GeneratedLetterPreview({
   const { t } = useLocale();
   const paragraphs = letter.content.split('\n\n');
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <div className="generated-preview generated-preview--visible">
-      <div className="generated-preview__header">
+      <div className="generated-preview__header no-print">
         <span className="generated-preview__badge">{t('preview.badge')}</span>
         {saved && <span className="generated-preview__saved">{t('preview.saved')}</span>}
       </div>
 
-      <div className="generated-preview__illustration">
+      <div className="generated-preview__illustration no-print">
         <LetterIllustration variant={letter.image} />
       </div>
 
@@ -43,7 +47,14 @@ export function GeneratedLetterPreview({
         ))}
       </div>
 
-      <div className="generated-preview__actions">
+      <div className="generated-preview__actions no-print">
+        <button
+          className="generated-preview__btn generated-preview__btn--secondary"
+          onClick={handlePrint}
+          aria-label={t('preview.printAria')}
+        >
+          {t('preview.print')}
+        </button>
         {!saved && (
           <button
             className="generated-preview__btn generated-preview__btn--primary"

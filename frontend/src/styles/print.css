@@ -1,0 +1,79 @@
+@media print {
+  .layout > header,
+  .layout > footer,
+  .no-print,
+  .reading-progress {
+    display: none !important;
+  }
+
+  body,
+  .layout,
+  .layout__main {
+    background: #fff !important;
+    color: #000 !important;
+    margin: 0;
+    padding: 0;
+  }
+
+  .layout__main {
+    max-width: none;
+    padding: 0;
+  }
+
+  .letter-page,
+  .generated-preview {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .letter-page__illustration,
+  .generated-preview__illustration {
+    display: none !important;
+  }
+
+  .letter-page__content,
+  .generated-preview__content {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  .letter-page__content p,
+  .generated-preview__content p {
+    color: #000 !important;
+    font-size: 12pt;
+    line-height: 1.6;
+  }
+
+  .letter-page__title,
+  .generated-preview__title {
+    color: #000 !important;
+    font-size: 18pt;
+    margin-bottom: 0.5rem;
+  }
+
+  .letter-page__category,
+  .generated-preview__meta {
+    color: #333 !important;
+    font-size: 10pt;
+  }
+
+  .letter-page__meta {
+    display: none !important;
+  }
+
+  .generate-page__form-section,
+  .generate-page__header {
+    display: none !important;
+  }
+
+  .generate-page__layout {
+    display: block !important;
+  }
+
+  .generate-page__preview-section {
+    width: 100% !important;
+  }
+}

@@ -45,6 +45,7 @@ export const he: TranslationKey = {
     read: '← קראו את המכתב',
     addFavorite: 'הוסף למועדפים',
     removeFavorite: 'הסר מהמועדפים',
+    deleteAria: 'מחק מכתב',
   },
   letterPage: {
     back: 'חזרה לספרייה →',
@@ -56,6 +57,12 @@ export const he: TranslationKey = {
     minRead: '{{minutes}} דקות קריאה',
     addFavorite: 'הוסף למועדפים',
     removeFavorite: 'הסר מהמועדפים',
+    delete: 'מחק',
+    deleteAria: 'מחק מכתב זה',
+    deleteConfirm: 'למחוק את המכתב מהספרייה? לא ניתן לבטל פעולה זו.',
+    deleteError: 'אין לך הרשאה למחוק מכתב זה.',
+    print: 'הדפסה',
+    printAria: 'הדפס מכתב זה',
   },
   about: {
     title: 'אודות ספריית המכתבים',
@@ -100,6 +107,8 @@ export const he: TranslationKey = {
     descriptionPlaceholder: 'תארו על מה המכתב, למי הוא מיועד ומה אתם רוצים לבטא...',
     toneLabel: 'טון',
     toneAria: 'טון המכתב',
+    genderLabel: 'מגדר הנמען',
+    genderAria: 'מגדר הנמען',
     generating: 'יוצר...',
     submit: 'צור מכתב',
     errors: {
@@ -109,7 +118,12 @@ export const he: TranslationKey = {
       descriptionRequired: 'תיאור הוא שדה חובה',
       descriptionMin: 'התיאור חייב להכיל לפחות 10 תווים',
       toneRequired: 'יש לבחור טון',
+      genderRequired: 'יש לבחור מגדר',
     },
+  },
+  genders: {
+    male: 'זכר',
+    female: 'נקבה',
   },
   tones: {
     Friendly: 'ידידותי',
@@ -124,6 +138,8 @@ export const he: TranslationKey = {
     save: 'שמור מכתב',
     view: 'צפה במכתב',
     browse: 'עיין בספרייה',
+    print: 'הדפסה',
+    printAria: 'הדפס מכתב זה',
   },
   pagination: {
     aria: 'עימוד',

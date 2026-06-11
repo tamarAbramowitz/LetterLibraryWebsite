@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { isLetterOwner } from '../../api/letters';
 import { useLocale } from '../../i18n/LocaleContext';
 import type { Letter } from '../../types/letter';
 import { LetterIllustration } from '../LetterIllustration/LetterIllustration';
@@ -8,10 +9,12 @@ interface LetterCardProps {
   letter: Letter;
   isFavorite: boolean;
   onToggleFavorite: (id: number) => void;
+  onDelete?: (id: number) => void;
 }
 
-export function LetterCard({ letter, isFavorite, onToggleFavorite }: LetterCardProps) {
+export function LetterCard({ letter, isFavorite, onToggleFavorite, onDelete }: LetterCardProps) {
   const { t } = useLocale();
+  const canDelete = isLetterOwner(letter);
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -19,10 +22,28 @@ export function LetterCard({ letter, isFavorite, onToggleFavorite }: LetterCardP
     onToggleFavorite(letter.id);
   };
 
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onDelete?.(letter.id);
+  };
+
   return (
     <Link to={`/letter/${letter.id}`} className="letter-card">
       <div className="letter-card__image">
         <LetterIllustration variant={letter.image} />
+        {canDelete && onDelete && (
+          <button
+            className="letter-card__delete"
+            onClick={handleDeleteClick}
+            aria-label={t('letterCard.deleteAria')}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            </svg>
+          </button>
+        )}
         <button
           className={`letter-card__favorite ${isFavorite ? 'letter-card__favorite--active' : ''}`}
           onClick={handleFavoriteClick}

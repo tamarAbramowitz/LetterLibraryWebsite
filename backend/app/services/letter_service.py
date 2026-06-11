@@ -86,6 +86,7 @@ class LetterService:
         category: str,
         description: str,
         content: str,
+        user_id: str | None = None,
     ) -> LetterModel:
         letter = LetterModel(
             id=cls.get_next_id(),
@@ -94,8 +95,22 @@ class LetterService:
             description=description,
             image=cls.category_to_image(category),
             content=content,
+            user_id=user_id,
         )
         letters = cls._load_all()
         letters.append(letter)
         cls._save_all(letters)
         return letter
+
+    @classmethod
+    def delete_by_id(cls, letter_id: int, user_id: str) -> bool:
+        letters = cls._load_all()
+        letter = next((l for l in letters if l.id == letter_id), None)
+        if not letter:
+            return False
+        if letter.user_id is None:
+            raise PermissionError("Library letters cannot be deleted")
+        if letter.user_id != user_id:
+            raise PermissionError("Not authorized to delete this letter")
+        cls._save_all([l for l in letters if l.id != letter_id])
+        return True
