@@ -36,8 +36,11 @@ jobs:
       - name: Build frontend
         working-directory: frontend
         env:
-          VITE_USE_STATIC_DATA: 'true'
+          VITE_USE_STATIC_DATA: ${{ secrets.VITE_API_URL && 'false' || 'true' }}
           VITE_BASE_PATH: /LetterLibraryWebsite/
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          # Required for admin login on GitHub Pages when no backend is deployed
+          VITE_ADMIN_PASSWORD: ${{ secrets.VITE_ADMIN_PASSWORD }}
         run: npm run build
 
       - name: Setup SPA routing on GitHub Pages

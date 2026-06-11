@@ -1,16 +1,21 @@
 import json
 import os
-from pathlib import Path
 
+from app.config import get_letters_path
 from app.models.letter import LetterModel
-
-DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "letters.json"
 
 
 class LetterService:
     @staticmethod
-    def _load_all() -> list[LetterModel]:
-        with open(DATA_PATH, encoding="utf-8") as f:
+    def _data_path():
+        return get_letters_path()
+
+    @classmethod
+    def _load_all(cls) -> list[LetterModel]:
+        path = cls._data_path()
+        if not path.exists():
+            return []
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         return [LetterModel.from_dict(item) for item in data]
 
@@ -59,8 +64,10 @@ class LetterService:
 
     @classmethod
     def _save_all(cls, letters: list[LetterModel]) -> None:
+        path = cls._data_path()
+        path.parent.mkdir(parents=True, exist_ok=True)
         data = [l.to_dict() for l in letters]
-        with open(DATA_PATH, "w", encoding="utf-8") as f:
+        with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
             f.write("\n")
             f.flush()

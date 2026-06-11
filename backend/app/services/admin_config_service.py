@@ -2,9 +2,7 @@ import hashlib
 import json
 import os
 import secrets
-from pathlib import Path
-
-CONFIG_PATH = Path(__file__).resolve().parent.parent / "data" / "admin_config.json"
+from app.config import get_admin_config_path
 _PBKDF2_ITERATIONS = 100_000
 
 
@@ -20,16 +18,22 @@ class AdminConfigService:
         return digest.hex()
 
     @classmethod
+    def _config_path(cls):
+        return get_admin_config_path()
+
+    @classmethod
     def _load_config(cls) -> dict | None:
-        if not CONFIG_PATH.exists():
+        path = cls._config_path()
+        if not path.exists():
             return None
-        with open(CONFIG_PATH, encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             return json.load(f)
 
     @classmethod
     def _save_config(cls, config: dict) -> None:
-        CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
-        with open(CONFIG_PATH, "w", encoding="utf-8") as f:
+        path = cls._config_path()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
             json.dump(config, f, indent=2)
             f.write("\n")
             f.flush()

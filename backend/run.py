@@ -1,5 +1,6 @@
-"""Start the Letter Library API on an available port."""
+"""Start the Letter Library API (local dev or production)."""
 
+import os
 import socket
 import sys
 
@@ -21,16 +22,23 @@ def find_port() -> int:
 
 
 def main() -> None:
-    port = find_port()
-    print(f"Starting Letter Library API at http://127.0.0.1:{port}")
-    print(f"API docs: http://127.0.0.1:{port}/docs")
-    if port != 8081:
-        print(f"\nNote: Update frontend/.env → VITE_API_URL=http://localhost:{port}")
-    print("Press Ctrl+C to stop.\n")
-
     import uvicorn
 
-    uvicorn.run("app.main:app", host="127.0.0.1", port=port, reload=False)
+    # Render and other PaaS hosts set PORT — bind to 0.0.0.0
+    if os.getenv("PORT"):
+        host = os.getenv("HOST", "0.0.0.0")
+        port = int(os.getenv("PORT"))
+        print(f"Starting Letter Library API (production) at {host}:{port}")
+    else:
+        host = os.getenv("HOST", "127.0.0.1")
+        port = int(os.getenv("PORT", str(find_port())))
+        print(f"Starting Letter Library API at http://{host}:{port}")
+        print(f"API docs: http://{host}:{port}/docs")
+        if port != 8081:
+            print(f"\nNote: Update frontend/.env → VITE_API_URL=http://localhost:{port}")
+        print("Press Ctrl+C to stop.\n")
+
+    uvicorn.run("app.main:app", host=host, port=port, reload=False)
 
 
 if __name__ == "__main__":

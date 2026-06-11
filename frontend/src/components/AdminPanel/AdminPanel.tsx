@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { deleteAllLetters, deleteAllUserLetters } from '../../api/admin';
 import { clearAllGeneratedLetters } from '../../api/letters';
+import { canUseAdminApi } from '../../utils/staticAdmin';
 import { ChangeAdminPasswordModal } from '../ChangeAdminPasswordModal/ChangeAdminPasswordModal';
 import { useLocale } from '../../i18n/LocaleContext';
 import './AdminPanel.css';
@@ -16,6 +17,7 @@ export function AdminPanel({ onLogout, onLettersChanged }: AdminPanelProps) {
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState<'all' | 'users' | null>(null);
   const [showChangePassword, setShowChangePassword] = useState(false);
+  const adminApiAvailable = canUseAdminApi();
 
   const handleDeleteAll = async () => {
     if (!window.confirm(t('admin.deleteAllConfirm'))) return;
@@ -25,8 +27,10 @@ export function AdminPanel({ onLogout, onLettersChanged }: AdminPanelProps) {
       await deleteAllLetters();
       clearAllGeneratedLetters();
       onLettersChanged();
-    } catch {
-      setError(t('admin.deleteAllError'));
+    } catch (err) {
+      setError(err instanceof Error && err.message === 'ADMIN_API_UNAVAILABLE'
+        ? t('admin.staticModeApiError')
+        : t('admin.deleteAllError'));
     } finally {
       setLoading(null);
     }
@@ -40,8 +44,10 @@ export function AdminPanel({ onLogout, onLettersChanged }: AdminPanelProps) {
       await deleteAllUserLetters();
       clearAllGeneratedLetters();
       onLettersChanged();
-    } catch {
-      setError(t('admin.deleteUsersError'));
+    } catch (err) {
+      setError(err instanceof Error && err.message === 'ADMIN_API_UNAVAILABLE'
+        ? t('admin.staticModeApiError')
+        : t('admin.deleteUsersError'));
     } finally {
       setLoading(null);
     }
@@ -57,21 +63,27 @@ export function AdminPanel({ onLogout, onLettersChanged }: AdminPanelProps) {
       </div>
 
       <p className="admin-panel__hint">{t('admin.panelHint')}</p>
+      {!adminApiAvailable && (
+        <p className="admin-panel__notice">{t('admin.staticModeNotice')}</p>
+      )}
 
       <div className="admin-panel__actions">
-        <button
-          type="button"
-          className="admin-panel__btn admin-panel__btn--secondary"
-          onClick={() => setShowChangePassword(true)}
-          disabled={loading !== null}
-        >
-          {t('admin.changePassword.btn')}
-        </button>
+        {adminApiAvailable && (
+          <button
+            type="button"
+            className="admin-panel__btn admin-panel__btn--secondary"
+            onClick={() => setShowChangePassword(true)}
+            disabled={loading !== null}
+          >
+            {t('admin.changePassword.btn')}
+          </button>
+        )}
         <button
           type="button"
           className="admin-panel__btn admin-panel__btn--danger"
           onClick={handleDeleteUserLetters}
-          disabled={loading !== null}
+          disabled={loading !== null || !adminApiAvailable}
+          title={!adminApiAvailable ? t('admin.staticModeApiError') : undefined}
         >
           {loading === 'users' ? t('admin.deleting') : t('admin.deleteUsers')}
         </button>
@@ -79,7 +91,8 @@ export function AdminPanel({ onLogout, onLettersChanged }: AdminPanelProps) {
           type="button"
           className="admin-panel__btn admin-panel__btn--danger-outline"
           onClick={handleDeleteAll}
-          disabled={loading !== null}
+          disabled={loading !== null || !adminApiAvailable}
+          title={!adminApiAvailable ? t('admin.staticModeApiError') : undefined}
         >
           {loading === 'all' ? t('admin.deleting') : t('admin.deleteAll')}
         </button>

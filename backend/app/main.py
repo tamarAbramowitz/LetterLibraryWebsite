@@ -4,7 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
+from app.config import ensure_data_files, get_cors_origins
 from app.routers import generate_router, letters_router
+
+ensure_data_files()
 
 app = FastAPI(
     title="Letter Library API",
@@ -14,12 +17,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:5174",
-        "http://127.0.0.1:5174",
-    ],
+    allow_origins=get_cors_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

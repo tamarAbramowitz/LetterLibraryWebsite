@@ -182,6 +182,9 @@ export const he: TranslationKey = {
     deleting: 'מוחק...',
     deleteAllError: 'מחיקת כל המכתבים נכשלה.',
     deleteUsersError: 'מחיקת מכתבי המשתמשים נכשלה.',
+    staticModeNotice:
+      'האתר פועל במצב סטטי. ניתן לראות תגיות מקור, אך מחיקה המונית ושינוי סיסמה דורשים שרת API פרוס.',
+    staticModeApiError: 'פעולה זו דורשת שרת API פרוס (לא זמין באחסון סטטי).',
     changePassword: {
       btn: 'שנה סיסמת מנהל',
       title: 'שינוי סיסמת מנהל',

@@ -8,6 +8,8 @@ A modern, responsive web application for browsing beautiful personal letter temp
 
 The live site is hosted on GitHub Pages and updates automatically when you push to the `main` branch.
 
+For full API features (admin delete, AI generation, user letters), deploy the backend to Render — see [backend/RENDER.md](backend/RENDER.md).
+
 ## Features
 
 - **Home Page** — Hero section, search, category filters, responsive card grid, letter count

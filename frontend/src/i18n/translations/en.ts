@@ -181,6 +181,9 @@ export const en = {
     deleting: 'Deleting...',
     deleteAllError: 'Failed to delete all letters.',
     deleteUsersError: 'Failed to delete user-generated letters.',
+    staticModeNotice:
+      'This site is running in static mode. You can view source badges, but mass delete and password change require a deployed backend API.',
+    staticModeApiError: 'This action requires a deployed backend API (not available on static hosting).',
     changePassword: {
       btn: 'Change Admin Password',
       title: 'Change Admin Password',
