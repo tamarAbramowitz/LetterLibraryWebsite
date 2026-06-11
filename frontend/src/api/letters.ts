@@ -58,23 +58,39 @@ function deleteGeneratedLetterFromStorage(id: number): boolean {
 }
 
 export async function deleteLetter(id: number): Promise<void> {
-  deleteGeneratedLetterFromStorage(id);
-  invalidateLettersCache();
-
-  if (USE_STATIC_DATA) return;
+  if (USE_STATIC_DATA) {
+    if (!deleteGeneratedLetterFromStorage(id)) {
+      throw new Error('Letter not found');
+    }
+    invalidateLettersCache();
+    return;
+  }
 
   const response = await fetch(`${API_BASE}/letters/${id}`, {
     method: 'DELETE',
     headers: getAuthHeaders(),
   });
 
-  if (response.status === 404) return;
   if (response.status === 403) {
     throw new Error('Not authorized to delete this letter');
   }
-  if (!response.ok) {
-    throw new Error('Failed to delete letter');
+
+  if (response.status === 204) {
+    deleteGeneratedLetterFromStorage(id);
+    invalidateLettersCache();
+    return;
   }
+
+  if (response.status === 404) {
+    // Letter exists only in this browser's localStorage (offline-generated).
+    if (deleteGeneratedLetterFromStorage(id)) {
+      invalidateLettersCache();
+      return;
+    }
+    throw new Error('Letter not found');
+  }
+
+  throw new Error('Failed to delete letter');
 }
 
 async function loadStaticLetters(): Promise<Letter[]> {

@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 
 from app.models.letter import LetterModel
@@ -62,6 +63,8 @@ class LetterService:
         with open(DATA_PATH, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
             f.write("\n")
+            f.flush()
+            os.fsync(f.fileno())
 
     @classmethod
     def get_next_id(cls) -> int:
